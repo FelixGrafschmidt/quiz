@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
 	const store = useStore();
-	let songs = store.songs;
-	const players = store.players;
+	const songs = computed(() => store.songs);
+	const players = computed(() => store.players);
 
-	const interval = setInterval(() => {
-		songs = store.songs;
+	const interval = setInterval(async () => {
+		await store.loadSongs();
 	}, 1000);
 
 	onBeforeUnmount(() => {

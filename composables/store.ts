@@ -1,107 +1,39 @@
 import { defineStore } from "pinia";
-import { Player } from "~~/models/interfaces/Player";
 import { Song } from "~~/models/interfaces/Song";
 
 export const useStore = defineStore("store", {
-	state: () => ({}),
-	actions: {},
-	getters: {
-		songs() {
-			return songs;
+	state: () => ({
+		players: [
+			{
+				name: "Julia",
+				points: 0,
+				id: 0,
+			},
+			{
+				name: "Fabian",
+				points: 0,
+				id: 1,
+			},
+			{
+				name: "Philipp",
+				points: 0,
+				id: 2,
+			},
+		],
+		songs: [],
+	}),
+	actions: {
+		async loadSongs() {
+			this.songs = await $fetch<Song[]>("/api/loadSongs");
 		},
-		players() {
-			return players;
+		async saveSongs() {
+			await $fetch("/api/saveSongs");
+		},
+		async activateSet(number: number) {
+			await $fetch(`/api/activateSet?number=${number}`);
+		},
+		async addSet(set: Song[]) {
+			await $fetch("/api/addSet", { body: set });
 		},
 	},
 });
-
-const songs: Song[] = [
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-	{
-		name: "Tabi no Tochuu",
-		origin: "Spice and Wolf",
-		genres: ["Adventure", "Fantasy", "Romance", "Adult Cast", "Historical"],
-		revealed: false,
-		correct: [],
-	},
-];
-
-const players: Player[] = [
-	{
-		name: "Julia",
-		points: 0,
-		id: 0,
-	},
-	{
-		name: "Fabian",
-		points: 0,
-		id: 1,
-	},
-	{
-		name: "Philipp",
-		points: 0,
-		id: 2,
-	},
-];
