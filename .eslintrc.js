@@ -2,24 +2,28 @@ module.exports = {
 	root: true,
 	parser: "vue-eslint-parser",
 	parserOptions: {
+		ecmaVersion: "latest",
+		parser: "@typescript-eslint/parser",
 		sourceType: "module",
 	},
-	env: {
-		browser: true,
-		amd: true,
-		node: true,
-	},
 	extends: [
-		"plugin:vue/vue3-recommended",
+		// "@nuxtjs/eslint-config-typescript",
+		// "plugin:nuxt/recommended",
+		// "plugin:prettier/recommended",
 		"eslint:recommended",
-		"@vue/eslint-config-typescript/recommended",
-		"@vue/eslint-config-prettier",
+		"plugin:@typescript-eslint/recommended",
+		"@nuxtjs/eslint-config-typescript",
+		"plugin:vue/vue3-recommended",
+		"plugin:prettier/recommended",
+		"plugin:vue/base",
+		"plugin:nuxt/recommended",
 	],
-	plugins: ["typescript"],
+	plugins: ["prettier", "@typescript-eslint"],
 	// add your custom rules here
 	rules: {
 		"no-console": "off",
 		"no-debugger": "off",
-		// "vue/first-attribute-linebreak": "off",
+		"vue/multi-word-component-names": "off",
 	},
+	ignorePatterns: [".nuxt/"],
 };
