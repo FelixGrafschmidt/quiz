@@ -5,7 +5,10 @@ module.exports = {
 			exec_mode: "cluster",
 			instances: "max",
 			script: "./.output/server/index.mjs",
-			args: "--PORT=3001",
+			env: {
+				PORT: 3001,
+				REDIS_PORT: 6378,
+			},
 		},
 	],
 };
