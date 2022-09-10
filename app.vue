@@ -4,11 +4,8 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-	import "@unocss/reset/antfu.css";
-</script>
-
 <style>
+	@import "@unocss/reset/antfu.css";
 	html {
 		scrollbar-gutter: unset;
 	}

@@ -6,11 +6,7 @@ export default defineNuxtConfig({
 	meta: {
 		title: "Quiz",
 	},
-	modules: [
-		// ...
-		"@pinia/nuxt",
-		"@unocss/nuxt",
-	],
+	modules: ["@pinia/nuxt", "@unocss/nuxt"],
 	unocss: {
 		// presets
 		uno: true, // enabled `@unocss/preset-uno`
@@ -21,6 +17,7 @@ export default defineNuxtConfig({
 		shortcuts: [],
 		rules: [],
 		presets: [presetWind(), presetAttributify()],
+		safelist: ["invisible"],
 	},
 	nitro: {
 		storage: {
