@@ -1,6 +1,6 @@
 <template>
 	<section v-if="!songs.length" class="mx-auto my-auto">
-		<img src="qr.svg" />
+		<img src="/qr.svg" />
 	</section>
 	<section v-else class="mx-auto my-auto justify-center items-center text-lg [zoom:110%]" flex="~ row wrap" gap-8>
 		<div v-for="(song, i) in songs" :key="i" class="items-center justify-center h-90" border-8 rounded flex="~ col" w="1/6" bg-gray-700>
