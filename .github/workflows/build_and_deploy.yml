@@ -44,7 +44,7 @@ jobs:
                   port: $PORT
                   username: $USERNAME
                   password: $PASSWORD
-                  source: ".output/"
+                  source: ".output/,ecosystem.config.js"
                   target: "/srv/quiz/"
                   debug: true
             - name: restart via ssh
