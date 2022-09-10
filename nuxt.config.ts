@@ -24,7 +24,7 @@ export default defineNuxtConfig({
 			redis: {
 				driver: "redis",
 				/* redis connector options */
-				port: process.env.REDIS_PORT || 6379, // Redis port
+				port: process.env.REDIS_PORT || 6378, // Redis port
 				host: "127.0.0.1", // Redis host
 				username: "", // needs Redis >= 6
 				password: "",
