@@ -62,6 +62,7 @@
 	});
 
 	function shuffleArray(array: Array<Song>) {
+		if (!array) return array;
 		const arrayCopy = JSON.parse(JSON.stringify(array)) as Array<Song>;
 		let seed = array.reduce((prev, curr) => {
 			prev += curr.name.length;
