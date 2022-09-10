@@ -44,7 +44,7 @@ jobs:
                   port: $PORT
                   username: $USERNAME
                   password: $PASSWORD
-                  source: ".output/,ecosystem.config.js"
+                  source: ".output/,ecosystem.config.js,nuxt.config.ts"
                   target: "/srv/quiz/"
                   debug: true
             - name: restart via ssh
