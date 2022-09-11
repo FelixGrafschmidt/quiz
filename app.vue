@@ -4,6 +4,8 @@
 	</div>
 </template>
 
+<script setup lang="ts"></script>
+
 <style>
 	@import "@unocss/reset/antfu.css";
 	html {

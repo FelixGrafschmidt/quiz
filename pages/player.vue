@@ -9,7 +9,7 @@
 		</label>
 	</section>
 	<section v-else-if="!loading">
-		<span v-if="!songs.length"> Please wait for the game to start. </span>
+		<span v-if="!store.session.activeSet"> Please wait for the game to start. </span>
 		<section v-else class="mx-auto my-auto justify-center items-center mt-4" flex="~ col" gap-8>
 			<div v-for="(song, i) in songs" :key="i" class="items-center justify-center" border-8 rounded flex="~ col" bg-gray-700>
 				<div class="py-4 flex flex-row flex-wrap gap-3 border-y-2 w-full px-4">
@@ -36,14 +36,29 @@
 	import { ComputedRef } from "vue";
 	import { Player } from "~~/models/interfaces/Player";
 	import { Song } from "~~/models/interfaces/Song";
+
+	definePageMeta({
+		middleware: async (req) => {
+			const store = useStore();
+			const sessionidParam = req.query.sessionid;
+
+			if (sessionidParam) {
+				await store.loadSession(sessionidParam.toString());
+				if (!store.session || !store.session.id) {
+					showError({ statusCode: 401, statusMessage: "Invalid Request" });
+				}
+			} else {
+				showError({ statusCode: 401, statusMessage: "Invalid Request" });
+			}
+		},
+	});
+
 	const store = useStore();
 	const loading = ref(true);
 	const start = ref(false);
 	const songs: ComputedRef<Song[]> = computed(() => shuffleArray(store.songs));
-	let player: Player = { name: "", id: nanoid(), points: 0, guesses: new Map() };
+	let player: Player = { name: "", id: nanoid(), points: 0, guesses: {} };
 
-	await store.loadSongs();
-	await store.loadPlayers();
 	if (process.client) {
 		const id = window.localStorage.getItem("id");
 		const p = store.players.find((p) => p.id === id);
@@ -66,8 +81,13 @@
 		await store.savePlayer(player);
 	}
 
+	await store.loadSongs();
+	await store.loadPlayers();
+
 	const interval = setInterval(async () => {
+		await store.loadSession();
 		await store.loadSongs();
+		await store.loadPlayers();
 	}, 1000);
 
 	onBeforeUnmount(() => {
@@ -100,7 +120,7 @@
 		return arrayCopy;
 	}
 
-	function random(seed) {
+	function random(seed: number) {
 		const x = Math.sin(seed++) * 10000;
 		return x - Math.floor(x);
 	}

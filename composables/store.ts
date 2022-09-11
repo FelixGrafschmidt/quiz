@@ -1,48 +1,51 @@
 import { defineStore } from "pinia";
 import { Player } from "~~/models/interfaces/Player";
+import { Session } from "~~/models/interfaces/Session";
 import { Song } from "~~/models/interfaces/Song";
 
 export const useStore = defineStore("store", {
 	state: () => ({
-		players: [] as Player[],
+		session: {} as Session,
 		songs: [] as Song[],
-		setCount: 0,
+		players: [] as Player[],
 	}),
 	actions: {
-		async unloadSet() {
-			await $fetch("/api/unloadSet");
-			this.songs = [];
+		// Session
+		async createSession() {
+			return await $fetch("/api/session/create");
+		},
+		async loadSession(id: string | undefined = undefined) {
+			this.session = await $fetch("/api/session/load?id=" + (id || this.session.id));
+		},
+		// Set
+		async addSet(set: Song[]) {
+			await $fetch("/api/set/add?id=" + this.session.id, { body: set, method: "POST" });
+		},
+		async activateSet(setid: string) {
+			this.songs = await $fetch(`/api/set/activate?setid=${setid}&id=${this.session.id}`);
+		},
+		async deactivateSet() {
+			await $fetch("/api/set/deactivate?id=" + this.session.id);
+		},
+		async cleanSet() {
+			await $fetch("/api/set/clean?id=" + this.session.id);
+		},
+		// Songs
+		async saveSongs() {
+			await $fetch("/api/songs/save?id=" + this.session.id, { body: this.songs, method: "POST" });
 		},
 		async loadSongs() {
-			this.songs = await $fetch<Song[]>("/api/loadSongs");
+			this.songs = await $fetch<Song[]>("/api/songs/load?id=" + this.session.id);
 		},
-		async saveSongs() {
-			await $fetch("/api/saveSongs", { body: this.songs, method: "POST" });
-		},
-		async activateSet(number: number) {
-			this.songs = await $fetch(`/api/activateSet?number=${number}`);
-		},
-		async addSet(set: Song[]) {
-			await $fetch("/api/addSet", { body: set, method: "POST" });
-			await this.getSetCount();
-		},
-		async getSetCount() {
-			this.setCount = (await $fetch("/api/getKeys")).length || 0;
-		},
+		// Players
 		async savePlayer(player: Player) {
-			// this.players.push(player);
-			await $fetch("/api/savePlayer", { body: player, method: "POST" });
+			await $fetch("/api/players/save?id=" + this.session.id, { body: player, method: "POST" });
 		},
 		async loadPlayers() {
-			try {
-				this.players = await $fetch("/api/loadPlayers");
-			} catch (error) {
-				console.error(error);
-			}
+			this.players = await $fetch("/api/players/load?id=" + this.session.id);
 		},
 		async removePlayers() {
-			await $fetch("/api/removePlayers");
-			this.players = [];
+			await $fetch("/api/players/remove?id=" + this.session.id);
 		},
 	},
 });
