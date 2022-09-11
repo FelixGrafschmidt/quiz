@@ -4,6 +4,8 @@
   "compilerOptions": {
     "types": [
       "@pinia/nuxt"
-    ]
+    ],
+    "strict": true,
+    "noImplicitAny": true
   }
 }

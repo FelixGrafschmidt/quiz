@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { Player } from "~~/models/interfaces/Player";
+import { Session } from "~~/models/interfaces/Session";
 import { Song } from "~~/models/interfaces/Song";
 
 export const useStore = defineStore("store", {
@@ -7,8 +8,15 @@ export const useStore = defineStore("store", {
 		players: [] as Player[],
 		songs: [] as Song[],
 		setCount: 0,
+		session: {} as Session,
 	}),
 	actions: {
+		async createSession() {
+			return await $fetch("/api/createSession");
+		},
+		async loadSession(id: string) {
+			this.session = await $fetch("/api/loadSession?id=" + id);
+		},
 		async unloadSet() {
 			await $fetch("/api/unloadSet");
 			this.songs = [];
@@ -30,7 +38,6 @@ export const useStore = defineStore("store", {
 			this.setCount = (await $fetch("/api/getKeys")).length || 0;
 		},
 		async savePlayer(player: Player) {
-			// this.players.push(player);
 			await $fetch("/api/savePlayer", { body: player, method: "POST" });
 		},
 		async loadPlayers() {

@@ -63,6 +63,22 @@
 	import { Player } from "~~/models/interfaces/Player";
 	import { Song } from "~~/models/interfaces/Song";
 
+	definePageMeta({
+		middleware: async (req) => {
+			const store = useStore();
+			const sessionIDParam = req.query.sessionid;
+
+			if (sessionIDParam) {
+				await store.loadSession(sessionIDParam.toString());
+				if (!store.session || !store.session.id) {
+					showError({ statusCode: 401, statusMessage: "Invalid Request" });
+				}
+			} else {
+				showError({ statusCode: 401, statusMessage: "Invalid Request" });
+			}
+		},
+	});
+
 	const store = useStore();
 	const songs: ComputedRef<Song[]> = computed(() => store.songs);
 	const players: ComputedRef<Player[]> = computed(() => store.players);

@@ -36,11 +36,28 @@
 	import { ComputedRef } from "vue";
 	import { Player } from "~~/models/interfaces/Player";
 	import { Song } from "~~/models/interfaces/Song";
+
+	definePageMeta({
+		middleware: async (req) => {
+			const store = useStore();
+			const sessionIDParam = req.query.sessionid;
+
+			if (sessionIDParam) {
+				await store.loadSession(sessionIDParam.toString());
+				if (!store.session || !store.session.id) {
+					showError({ statusCode: 401, statusMessage: "Invalid Request" });
+				}
+			} else {
+				showError({ statusCode: 401, statusMessage: "Invalid Request" });
+			}
+		},
+	});
+
 	const store = useStore();
 	const loading = ref(true);
 	const start = ref(false);
 	const songs: ComputedRef<Song[]> = computed(() => shuffleArray(store.songs));
-	let player: Player = { name: "", id: nanoid(), points: 0, guesses: new Map() };
+	let player: Player = { name: "", id: nanoid(), points: 0, guesses: {} };
 
 	await store.loadSongs();
 	await store.loadPlayers();
@@ -100,7 +117,7 @@
 		return arrayCopy;
 	}
 
-	function random(seed) {
+	function random(seed: number) {
 		const x = Math.sin(seed++) * 10000;
 		return x - Math.floor(x);
 	}
