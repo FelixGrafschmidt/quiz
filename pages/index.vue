@@ -1,5 +1,5 @@
 <template>
-	<section v-if="!songs.length" class="mx-auto my-auto flex flex-row gap-64 [zoom:250%]">
+	<section v-if="!store.session.activeSet" class="mx-auto my-auto flex flex-row gap-64 [zoom:250%]">
 		<a target="_blank" :href="'/player?sessionid=' + store.session.id">
 			<span class="flex flex-row justify-center mb-4">Players</span>
 			<img :src="qrPlayer" />
@@ -55,10 +55,10 @@
 	definePageMeta({
 		middleware: async (req) => {
 			const store = useStore();
-			const sessionIDParam = req.query.sessionid;
+			const sessionidParam = req.query.sessionid;
 
-			if (sessionIDParam) {
-				await store.loadSession(sessionIDParam.toString());
+			if (sessionidParam) {
+				await store.loadSession(sessionidParam.toString());
 				if (!store.session || !store.session.id) {
 					const id = (await store.createSession()).id;
 					const target = { path: "/", query: { sessionid: id } };
@@ -100,6 +100,7 @@
 	await store.loadPlayers();
 
 	const interval = setInterval(async () => {
+		await store.loadSession();
 		await store.loadSongs();
 		await store.loadPlayers();
 	}, 1000);

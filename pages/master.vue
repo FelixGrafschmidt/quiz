@@ -11,17 +11,9 @@
 					{{ player.name }}
 				</span>
 			</div>
-			<div v-if="setCount > 0" py-4 class="flex flex-row flex-wrap gap-4 items-center justify-center">
-				<button
-					v-for="i in setCount"
-					:key="i"
-					class="h-12 w-45% rounded bg-gray-600"
-					@click="
-						store.activateSet(i);
-						mode = 'game';
-					"
-				>
-					Start Set {{ i }}
+			<div v-if="store.session.sets.length" py-4 class="flex flex-row flex-wrap gap-4 items-center justify-center">
+				<button v-for="(set, i) in store.session.sets" :key="i" class="h-12 w-45% rounded bg-gray-600" @click="activateSet(set)">
+					Start Set {{ i + 1 }}
 				</button>
 			</div>
 			<div py-4 px-2>
@@ -29,9 +21,10 @@
 				<textarea v-model="newSet" class="rounded my-2 text-black" cols="30" rows="10"></textarea>
 				<button class="h-12 rounded bg-gray-600" @click="addSet">Save</button>
 			</div>
-			<div py-4 px-2 flex="~ row" justify-center w-full gap-4>
-				<button class="h-12 w-50% rounded bg-red-800" @click="store.unloadSet()">Unload Songs</button>
+			<div py-4 px-2 flex="~ row wrap" justify-center w-full gap-4>
+				<button class="h-12 w-50% rounded bg-red-800" @click="store.deactivateSet()">Unload Songs</button>
 				<button class="h-12 w-50% rounded bg-red-800" @click="store.removePlayers()">Remove Players</button>
+				<button class="h-12 w-50% rounded bg-red-800" @click="store.cleanSet()">Clean Set</button>
 			</div>
 		</section>
 		<section v-else-if="mode === 'game'" class="mx-auto my-auto justify-center items-center mt-4" flex="~ col" gap-8>
@@ -66,10 +59,10 @@
 	definePageMeta({
 		middleware: async (req) => {
 			const store = useStore();
-			const sessionIDParam = req.query.sessionid;
+			const sessionidParam = req.query.sessionid;
 
-			if (sessionIDParam) {
-				await store.loadSession(sessionIDParam.toString());
+			if (sessionidParam) {
+				await store.loadSession(sessionidParam.toString());
 				if (!store.session || !store.session.id) {
 					showError({ statusCode: 401, statusMessage: "Invalid Request" });
 				}
@@ -82,10 +75,8 @@
 	const store = useStore();
 	const songs: ComputedRef<Song[]> = computed(() => store.songs);
 	const players: ComputedRef<Player[]> = computed(() => store.players);
-	const mode = ref("prep");
+	const mode = ref(store.session.activeSet ? "game" : "prep");
 	const newSet = ref("");
-	await store.getSetCount();
-	const setCount = computed(() => store.setCount);
 
 	async function revealSong(song: Song) {
 		song.revealed = true;
@@ -104,9 +95,18 @@
 		}
 	}
 
+	async function activateSet(set: string) {
+		await store.activateSet(set);
+		await store.loadSession();
+		await store.loadSongs();
+		mode.value = "game";
+	}
+
 	await store.loadSongs();
+	await store.loadPlayers();
 
 	const interval = setInterval(async () => {
+		await store.loadSession();
 		await store.loadSongs();
 		await store.loadPlayers();
 	}, 1000);
