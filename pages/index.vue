@@ -1,9 +1,13 @@
 <template>
-	<section v-if="!songs.length" class="mx-auto my-auto">
-		<span>Players</span>
-		<img :src="qrPlayer" />
-		<span>Game Master</span>
-		<img :src="qrMaster" />
+	<section v-if="!songs.length" class="mx-auto my-auto flex flex-row gap-64 [zoom:250%]">
+		<a target="_blank" :href="'/player?sessionid=' + store.session.id">
+			<span class="flex flex-row justify-center mb-4">Players</span>
+			<img :src="qrPlayer" />
+		</a>
+		<a target="_blank" :href="'/master?sessionid=' + store.session.id">
+			<span class="flex flex-row justify-center mb-4">Game Master</span>
+			<img :src="qrMaster" />
+		</a>
 	</section>
 	<section v-else class="mx-auto my-auto justify-center items-center text-lg [zoom:110%]" flex="~ row wrap" gap-8>
 		<div v-for="(song, i) in songs" :key="i" class="items-center justify-center h-90" border-8 rounded flex="~ col" w="1/6" bg-gray-700>
