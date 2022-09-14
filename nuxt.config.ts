@@ -1,4 +1,3 @@
-import { defineNuxtConfig } from "nuxt";
 import { presetWind, presetAttributify } from "unocss";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
