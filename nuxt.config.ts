@@ -1,11 +1,12 @@
 import { presetWind, presetAttributify } from "unocss";
+import { defineNuxtConfig } from "nuxt/config";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
 	meta: {
 		title: "Quiz",
 	},
-	modules: ["@pinia/nuxt", "@unocss/nuxt"],
+	modules: ["@pinia/nuxt", "@unocss/nuxt", "nuxt-icon"],
 	unocss: {
 		// presets
 		uno: true, // enabled `@unocss/preset-uno`
@@ -29,6 +30,14 @@ export default defineNuxtConfig({
 				password: "",
 				db: 1, // Defaults to 0
 			},
+		},
+	},
+	runtimeConfig: {
+		googleApiKey: "",
+	},
+	vue: {
+		config: {
+			devtools: true,
 		},
 	},
 });

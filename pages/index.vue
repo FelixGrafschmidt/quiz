@@ -1,10 +1,10 @@
 <template>
-	<section v-if="!store.session.activeSet" class="mx-auto my-auto flex flex-row gap-64 [zoom:250%]">
-		<a target="_blank" :href="'/player?sessionid=' + store.session.id">
+	<section v-if="!store.session.activeSet" class="mx-auto my-auto flex flex-row gap-64">
+		<a target="_blank" :href="'/player?sessionid=' + store.session.id" class="[zoom:250%]">
 			<span class="flex flex-row justify-center mb-4">Players</span>
 			<img :src="qrPlayer" />
 		</a>
-		<a target="_blank" :href="'/master?sessionid=' + store.session.id">
+		<a target="_blank" :href="'/master?sessionid=' + store.session.id" class="[zoom:250%]">
 			<span class="flex flex-row justify-center mb-4">Game Master</span>
 			<img :src="qrMaster" />
 		</a>

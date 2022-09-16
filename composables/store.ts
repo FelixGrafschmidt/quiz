@@ -1,3 +1,6 @@
+import { youtube_v3 as ytV3 } from "@googleapis/youtube";
+import { GaxiosResponse } from "gaxios";
+
 import { defineStore } from "pinia";
 import { Player } from "~~/models/interfaces/Player";
 import { Session } from "~~/models/interfaces/Session";
@@ -8,6 +11,7 @@ export const useStore = defineStore("store", {
 		session: {} as Session,
 		songs: [] as Song[],
 		players: [] as Player[],
+		searchResult: {} as GaxiosResponse<ytV3.Schema$SearchListResponse>,
 	}),
 	actions: {
 		// Session
@@ -46,6 +50,12 @@ export const useStore = defineStore("store", {
 		},
 		async removePlayers() {
 			await $fetch("/api/players/remove?id=" + this.session.id);
+		},
+		async search(query: string) {
+			this.searchResult = (await $fetch("/api/youtube/search", {
+				params: { query },
+				headers: { Referer: window.location.href },
+			})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
 		},
 	},
 });

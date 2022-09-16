@@ -28,7 +28,15 @@
 			</div>
 		</section>
 		<section v-else-if="mode === 'game'" class="mx-auto my-auto justify-center items-center mt-4" flex="~ col" gap-8>
-			<div v-for="(song, i) in songs" :key="i" class="items-center justify-center" border-8 rounded flex="~ col" bg-gray-700>
+			<div
+				v-for="(song, i) in songs"
+				:key="i"
+				class="items-center justify-center w-screen max-w-[16rem]"
+				border-8
+				rounded
+				flex="~ col"
+				bg-gray-700
+			>
 				<div class="flex flex-col items-center" py-4 gap-2>
 					<div class="text-3rem">
 						{{ (songs.indexOf(song) + 1).toString().padStart(2, "0") }}
