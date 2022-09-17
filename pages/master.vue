@@ -1,56 +1,70 @@
 <template>
-	<div>
-		<section class="w-full bg-gray-600 flex items-center flex-row justify-around divide-x">
-			<button class="w-1/2 h-16 flex items-center justify-center" @click="mode = 'prep'">Preparation</button>
-			<button class="w-1/2 h-16 flex items-center justify-center" @click="mode = 'game'">Game</button>
+	<div xl="w-5xl mx-auto">
+		<section w-full bg-gray-600 flex items-center flex-row justify-around divide-x>
+			<button w="1/2" h-16 flex items-center justify-center @click="mode = 'prep'">Preparation</button>
+			<button w="1/2" h-16 flex items-center justify-center @click="mode = 'game'">Game</button>
 		</section>
-		<section v-if="mode === 'prep'" class="divide-y flex flex-col">
+		<section v-if="mode === 'prep'" divide-y flex flex-col>
 			<div py-4 px-2>
-				<span class="text-xl mb-2">Connected Players</span>
+				<span text-xl mb-2>Connected Players</span>
 				<span v-for="(player, i) in players" :key="i">
 					{{ player.name }}
 				</span>
 			</div>
-			<div v-if="store.session.sets.length" py-4 class="flex flex-row flex-wrap gap-4 items-center justify-center">
-				<button v-for="(set, i) in store.session.sets" :key="i" class="h-12 w-45% rounded bg-gray-600" @click="activateSet(set)">
-					Start Set {{ i + 1 }}
-				</button>
-			</div>
-			<div py-4 px-2>
-				<span class="text-xl">Create new Set</span>
-				<textarea v-model="newSet" class="rounded my-2 text-black" cols="30" rows="10"></textarea>
-				<button class="h-12 rounded bg-gray-600" @click="addSet">Save</button>
+			<div py-4 px-2 flex="~ col" items-start justify-center>
+				<div mb-2 flex="~ row" items-end gap-2>
+					<span text-xl>Sets</span>
+					<client-only>
+						<a target="_blank" :href="editLink" underline cursor-pointer>Edit ></a>
+					</client-only>
+				</div>
+				<div v-if="Object.keys(store.game.sets).length" flex="~ col wrap" py-4 gap-4 items-start justify-center w-full>
+					<span>Available Sets</span>
+					<div flex="~ row wrap" gap-4 items-start justify-center w-full>
+						<button v-for="(set, i) in store.game.sets" :key="i" h-12 rounded bg-gray-600 w="45%" @click="activateSet()">
+							Start Set {{ set.name }}
+						</button>
+					</div>
+				</div>
+				<div py-4 px-2 w-full>
+					<span text-xl>Create new Set</span>
+					<textarea v-model="newSet" px-2 py-1 rounded my-2 text-black cols="30" rows="10"></textarea>
+					<button h-12 rounded bg-gray-600 @click="addSet">Save</button>
+				</div>
 			</div>
 			<div py-4 px-2 flex="~ row wrap" justify-center w-full gap-4>
-				<button class="h-12 w-50% rounded bg-red-800" @click="store.deactivateSet()">Unload Songs</button>
-				<button class="h-12 w-50% rounded bg-red-800" @click="store.removePlayers()">Remove Players</button>
-				<button class="h-12 w-50% rounded bg-red-800" @click="store.cleanSet()">Clean Set</button>
+				<!-- <button w="33%" h-12 rounded bg-red-800 @click="store.deactivateSet()">Unload Songs</button>
+				<button w="33%" h-12 rounded bg-red-800 @click="store.removePlayers()">Remove Players</button>
+				<button w="33%" h-12 rounded bg-red-800 @click="store.cleanSet()">Clean Set</button> -->
 			</div>
 		</section>
-		<section v-else-if="mode === 'game'" class="mx-auto my-auto justify-center items-center mt-4" flex="~ col" gap-8>
+		<section v-else-if="mode === 'game'" mx-auto my-auto justify-center items-center mt-4 flex="~ col" gap-8>
 			<div
 				v-for="(song, i) in songs"
 				:key="i"
-				class="items-center justify-center w-screen max-w-[16rem]"
+				items-center
+				justify-center
+				w-screen
+				max-w="16rem"
 				border-8
 				rounded
 				flex="~ col"
 				bg-gray-700
 			>
-				<div class="flex flex-col items-center" py-4 gap-2>
-					<div class="text-3rem">
+				<div flex flex-col items-center py-4 gap-2>
+					<div text-3rem>
 						{{ (songs.indexOf(song) + 1).toString().padStart(2, "0") }}
 					</div>
-					<div class="flex flex-col w-full items-center">
-						<div class="text-xl font-extrabold">{{ song.origin }}</div>
-						<div class="italic text-sm">{{ song.name }}</div>
+					<div flex flex-col w-full items-center>
+						<div text-xl font-extrabold>{{ song.origin }}</div>
+						<div italic text-sm>{{ song.name }}</div>
 					</div>
 				</div>
-				<div class="py-4 flex flex-row flex-wrap gap-3 border-y-2 w-full px-4">
+				<div py-4 flex flex-row flex-wrap gap-3 border-y-2 w-full px-4>
 					<span v-for="(genre, k) in song.genres" :key="k">{{ genre }}</span>
 				</div>
-				<div v-if="!song.revealed" class="flex flex-row flex-wrap border-y-2 w-full bg-teal-700 items-center justify-center">
-					<button class="h-full w-full p-4" @click="revealSong(song)">Reveal?</button>
+				<div v-if="!song.revealed" flex flex-row flex-wrap border-y-2 w-full bg-teal-700 items-center justify-center>
+					<button h-full w-full p-4 @click="revealSong(song)">Reveal?</button>
 				</div>
 				<div v-else p-4>Revealed</div>
 			</div>
@@ -62,39 +76,38 @@
 	import { nanoid } from "nanoid";
 	import { ComputedRef } from "vue";
 	import { Player } from "~~/models/interfaces/Player";
+	import { Set } from "~~/models/interfaces/Set";
 	import { Song } from "~~/models/interfaces/Song";
 
 	definePageMeta({
-		middleware: async (req) => {
-			const store = useStore();
-			const sessionidParam = req.query.sessionid;
-
-			if (sessionidParam) {
-				await store.loadSession(sessionidParam.toString());
-				if (!store.session || !store.session.id) {
-					showError({ statusCode: 401, statusMessage: "Invalid Request" });
-				}
-			} else {
-				showError({ statusCode: 401, statusMessage: "Invalid Request" });
-			}
-		},
+		middleware: ["game"],
 	});
 
 	const store = useStore();
-	const songs: ComputedRef<Song[]> = computed(() => store.songs);
-	const players: ComputedRef<Player[]> = computed(() => store.players);
-	const mode = ref(store.session.activeSet ? "game" : "prep");
+	const songs: ComputedRef<Song[]> = computed(() => []);
+	const players: ComputedRef<Player[]> = computed(() => store.game.players);
+	const mode = ref(store.game.activeSet ? "game" : "prep");
 	const newSet = ref("");
+	const editLink = computed(() => {
+		if (process.server) {
+			return "";
+		} else {
+			const url = new URL(window.location.href);
+			url.pathname = "/edit";
+			return url.toString();
+		}
+	});
 
-	async function revealSong(song: Song) {
+	function revealSong(song: Song) {
 		song.revealed = true;
-		await store.saveSongs();
+		// await store.saveSongs();
 	}
 
 	async function addSet() {
 		try {
-			const set = JSON.parse(newSet.value) as Song[];
-			set.forEach((song) => (song.id = nanoid()));
+			const set = JSON.parse(newSet.value) as Set;
+			set.id = nanoid();
+			set.songs.forEach((song) => (song.id = nanoid()));
 			await store.addSet(set);
 		} catch (error) {
 			console.error(error);
@@ -103,23 +116,23 @@
 		}
 	}
 
-	async function activateSet(set: string) {
-		await store.activateSet(set);
-		await store.loadSession();
-		await store.loadSongs();
-		mode.value = "game";
+	async function activateSet() {
+		// await store.activateSet(set);
+		// await store.loadSession();
+		// await store.loadSongs();
+		// mode.value = "game";
 	}
 
-	await store.loadSongs();
-	await store.loadPlayers();
+	// await store.loadSongs();
+	// await store.loadPlayers();
 
-	const interval = setInterval(async () => {
-		await store.loadSession();
-		await store.loadSongs();
-		await store.loadPlayers();
-	}, 1000);
+	// const interval = setInterval(async () => {
+	// 	await store.loadSession();
+	// 	await store.loadSongs();
+	// 	await store.loadPlayers();
+	// }, 1000);
 
-	onBeforeUnmount(() => {
-		clearInterval(interval);
-	});
+	// onBeforeUnmount(() => {
+	// 	clearInterval(interval);
+	// });
 </script>

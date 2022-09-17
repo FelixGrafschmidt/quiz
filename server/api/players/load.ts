@@ -1,5 +1,5 @@
 import { Player } from "~~/models/interfaces/Player";
-import { Session } from "~~/models/interfaces/Session";
+import { Session } from "~~/models/interfaces/Game";
 
 export default defineEventHandler(async (event) => {
 	if (!event.req.url) {

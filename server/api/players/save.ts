@@ -1,4 +1,4 @@
-import { Session } from "~~/models/interfaces/Session";
+import { Session } from "~~/models/interfaces/Game";
 import { Player } from "~~/models/interfaces/Player";
 
 export default defineEventHandler(async (event) => {

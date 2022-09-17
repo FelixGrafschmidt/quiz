@@ -19,19 +19,6 @@ export default defineNuxtConfig({
 		presets: [presetWind(), presetAttributify()],
 		safelist: ["invisible"],
 	},
-	nitro: {
-		storage: {
-			redis: {
-				driver: "redis",
-				/* redis connector options */
-				port: process.env.REDIS_PORT || 6378, // Redis port
-				host: "127.0.0.1", // Redis host
-				username: "", // needs Redis >= 6
-				password: "",
-				db: 1, // Defaults to 0
-			},
-		},
-	},
 	runtimeConfig: {
 		googleApiKey: "",
 	},

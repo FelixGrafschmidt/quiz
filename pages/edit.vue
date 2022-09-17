@@ -35,6 +35,22 @@
 <script setup lang="ts">
 	import { youtube_v3 as ytV3 } from "@googleapis/youtube";
 	import { Song } from "~~/models/interfaces/Song";
+	definePageMeta({
+		middleware: async (req) => {
+			const store = useStore();
+			const sessionidParam = req.query.sessionid;
+
+			if (sessionidParam) {
+				await store.loadSession(sessionidParam.toString());
+				if (!store.session || !store.session.id) {
+					showError({ statusCode: 401, statusMessage: "Invalid Request" });
+				}
+			} else {
+				showError({ statusCode: 401, statusMessage: "Invalid Request" });
+			}
+		},
+	});
+
 	const store = useStore();
 	const query = ref("");
 	const set: Song[] | null = null;
@@ -51,4 +67,12 @@
 			playing.value = !playing.value;
 		}
 	}
+
+	// const interval = setInterval(async () => {
+	// 	await store.loadSession();
+	// }, 1000);
+
+	// onBeforeUnmount(() => {
+	// 	clearInterval(interval);
+	// });
 </script>

@@ -1,4 +1,4 @@
-import { Session } from "~~/models/interfaces/Session";
+import { Session } from "~~/models/interfaces/Game";
 import { Song } from "~~/models/interfaces/Song";
 
 export default defineEventHandler(async (event) => {
@@ -8,7 +8,6 @@ export default defineEventHandler(async (event) => {
 	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
 	const sessionid = url.searchParams.get("id");
 	const session = (await useStorage().getItem("redis:session-" + sessionid)) as Session;
-	const body = (await useBody(event)) as Array<Song>;
-	await useStorage().setItem(`redis:songs-` + session.activeSet, body);
-	return true;
+	const response = (await useStorage().getItem("redis:songs-" + session.activeSet)) as Array<Song>;
+	return response;
 });

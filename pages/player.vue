@@ -86,15 +86,15 @@
 	await store.loadSongs();
 	await store.loadPlayers();
 
-	const interval = setInterval(async () => {
-		await store.loadSession();
-		await store.loadSongs();
-		await store.loadPlayers();
-	}, 1000);
+	// const interval = setInterval(async () => {
+	// 	await store.loadSession();
+	// 	await store.loadSongs();
+	// 	await store.loadPlayers();
+	// }, 1000);
 
-	onBeforeUnmount(() => {
-		clearInterval(interval);
-	});
+	// onBeforeUnmount(() => {
+	// 	clearInterval(interval);
+	// });
 
 	function shuffleArray(array: Array<Song>) {
 		if (!array) return array;
