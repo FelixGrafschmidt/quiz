@@ -18,15 +18,12 @@ export default defineEventHandler(async (event) => {
 	const set: Set = await useBody(event);
 
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
-	if (game.sets.find((s) => set.id === s.id)) {
-		game.sets = game.sets.filter((s) => s.id !== set.id);
-	}
 
-	game.sets.push(set);
+	game.sets = game.sets.filter((s) => s.id !== set.id);
 
 	game.sets = removeDuplicates(game.sets, "id");
 
-	await client.publish(gameid, JSON.stringify({ key: "set", id: set.id, value: set }));
+	await client.publish(gameid, JSON.stringify({ key: "set", id: set.id, value: undefined }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

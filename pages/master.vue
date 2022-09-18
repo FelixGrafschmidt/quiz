@@ -26,11 +26,6 @@
 						</button>
 					</div>
 				</div>
-				<div py-4 px-2 w-full>
-					<span text-xl>Create new Set</span>
-					<textarea v-model="newSet" px-2 py-1 rounded my-2 text-black cols="30" rows="10"></textarea>
-					<button h-12 rounded bg-gray-600 @click="addSet">Save</button>
-				</div>
 			</div>
 			<div py-4 px-2 flex="~ row wrap" justify-center w-full gap-4>
 				<!-- <button w="33%" h-12 rounded bg-red-800 @click="store.deactivateSet()">Unload Songs</button>
@@ -61,7 +56,7 @@
 					</div>
 				</div>
 				<div py-4 flex flex-row flex-wrap gap-3 border-y-2 w-full px-4>
-					<span v-for="(genre, k) in song.genres" :key="k">{{ genre }}</span>
+					<span v-for="(tag, k) in song.tags" :key="k">{{ tag }}</span>
 				</div>
 				<div v-if="!song.revealed" flex flex-row flex-wrap border-y-2 w-full bg-teal-700 items-center justify-center>
 					<button h-full w-full p-4 @click="revealSong(song)">Reveal?</button>
@@ -73,10 +68,8 @@
 </template>
 
 <script setup lang="ts">
-	import { nanoid } from "nanoid";
 	import { ComputedRef } from "vue";
 	import { Player } from "~~/models/interfaces/Player";
-	import { Set } from "~~/models/interfaces/Set";
 	import { Song } from "~~/models/interfaces/Song";
 
 	definePageMeta({
@@ -87,7 +80,6 @@
 	const songs: ComputedRef<Song[]> = computed(() => []);
 	const players: ComputedRef<Player[]> = computed(() => store.game.players);
 	const mode = ref(store.game.activeSet ? "game" : "prep");
-	const newSet = ref("");
 	const editLink = computed(() => {
 		if (process.server) {
 			return "";
@@ -101,19 +93,6 @@
 	function revealSong(song: Song) {
 		song.revealed = true;
 		// await store.saveSongs();
-	}
-
-	async function addSet() {
-		try {
-			const set = JSON.parse(newSet.value) as Set;
-			set.id = nanoid();
-			set.songs.forEach((song) => (song.id = nanoid()));
-			await store.addSet(set);
-		} catch (error) {
-			console.error(error);
-			console.error(newSet.value);
-			window.alert("Error while saving set, look in devtools for more information");
-		}
 	}
 
 	async function activateSet() {

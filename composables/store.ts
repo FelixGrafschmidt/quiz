@@ -18,13 +18,15 @@ export const useStore = defineStore("store", {
 		update(key: string, id: string, value: object) {
 			switch (key) {
 				case "set":
-					const set = this.game.sets.find((set) => set.id === id);
-					this.game.sets.filter((s) => s !== set);
-					this.game.sets.push(value as Set);
-					// this.game.sets.push(set)
-					// const sets = this.game.sets as { [key: string]: Set };
-					// sets[id] = value as Set;
-					// Object.assign(this.game.sets, sets);
+					if (!value) {
+						this.game.sets = this.game.sets.filter((s) => s.id !== id);
+					} else {
+						const set = this.game.sets.find((set) => set.id === id);
+						if (set) {
+							this.game.sets = this.game.sets.filter((s) => s.id !== set.id);
+						}
+						this.game.sets.push(value as Set);
+					}
 					break;
 				case "song":
 					break;
@@ -45,6 +47,10 @@ export const useStore = defineStore("store", {
 		// // Set
 		async addSet(set: Set) {
 			await $fetch("/api/set/add?id=" + this.game.id, { body: set, method: "POST" });
+		},
+		async deleteSet(set: Set) {
+			// this.game.sets = this.game.sets.filter((s) => s !== set);
+			await $fetch("/api/set/delete?id=" + this.game.id, { body: set, method: "POST" });
 		},
 		// async activateSet(setid: string) {
 		// 	this.songs = await $fetch(`/api/set/activate?setid=${setid}&id=${this.session.id}`);
@@ -72,11 +78,11 @@ export const useStore = defineStore("store", {
 		// async removePlayers() {
 		// 	await $fetch("/api/players/remove?id=" + this.session.id);
 		// },
-		// async search(query: string) {
-		// 	this.searchResult = (await $fetch("/api/youtube/search", {
-		// 		params: { query },
-		// 		headers: { Referer: window.location.href },
-		// 	})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
-		// },
+		async search(query: string) {
+			this.searchResult = (await $fetch("/api/youtube/search", {
+				params: { query },
+				headers: { Referer: window.location.href },
+			})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
+		},
 	},
 });

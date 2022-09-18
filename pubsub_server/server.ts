@@ -21,14 +21,13 @@ let sockets: Array<{ id: string; socket: WebSocket }> = [];
 
 // broadcast on web socket when receving a Redis PUB/SUB Event
 await client.subscribe("register-channel", (message) => {
-	console.log("register-channel", message);
 	if (!channels.includes(message)) {
 		client.subscribe(message, (message, channel) => {
-			sockets.forEach((s) => {
+			for (const s of sockets) {
 				if (s.id === channel) {
 					s.socket.send(message);
 				}
-			});
+			}
 		});
 		channels.push(message);
 	}

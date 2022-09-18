@@ -1,5 +1,6 @@
 import { presetWind, presetAttributify } from "unocss";
 import { defineNuxtConfig } from "nuxt/config";
+import { presetScrollbar } from "unocss-preset-scrollbar";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -16,7 +17,13 @@ export default defineNuxtConfig({
 		// core options
 		shortcuts: [],
 		rules: [],
-		presets: [presetWind(), presetAttributify()],
+		presets: [
+			presetWind(),
+			presetAttributify(),
+			presetScrollbar({
+				// config
+			}),
+		],
 		safelist: ["invisible"],
 	},
 	runtimeConfig: {

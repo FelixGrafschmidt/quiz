@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 	}
 	const params: ytV3.Params$Resource$Search$List = {
 		auth: useRuntimeConfig().googleApiKey,
-		maxResults: 10,
+		maxResults: 5,
 		q: query,
 		part: ["snippet"],
 	};
