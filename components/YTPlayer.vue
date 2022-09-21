@@ -8,14 +8,15 @@
 	const playerDiv = ref<HTMLElement | null>(null);
 	let player: Player;
 	onMounted(() => {
-		player = new Player(playerDiv.value || "", { width: 500 });
-		player.load(props.videoid);
+		player = new Player(playerDiv.value || "", {});
+		player.setVolume(50);
+		player.load(props.videoid, true);
 	});
 	watch(
 		() => props.videoid,
 		(newValue, oldValue) => {
 			if (oldValue !== newValue) {
-				player.load(newValue);
+				player.load(newValue, true);
 			}
 		}
 	);

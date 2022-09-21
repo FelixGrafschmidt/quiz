@@ -6,4 +6,5 @@ export interface Song {
 	videoid: string;
 	type: string;
 	revealed: boolean;
+	playing: boolean;
 }

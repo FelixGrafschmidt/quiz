@@ -1,4 +1,5 @@
 import { createClient } from "redis";
+import { Key } from "~~/models/enums/Update";
 import { Game } from "~~/models/interfaces/Game";
 import { Set } from "~~/models/interfaces/Set";
 import { removeDuplicates } from "~~/utils/arrays";
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
 	game.sets = removeDuplicates(game.sets, "id");
 
-	await client.publish(gameid, JSON.stringify({ key: "set", id: set.id, value: set }));
+	await client.publish(gameid, JSON.stringify({ key: Key.set, id: set.id, value: set }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

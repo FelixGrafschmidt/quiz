@@ -2,12 +2,15 @@ import { youtube_v3 as ytV3 } from "@googleapis/youtube";
 import { GaxiosResponse } from "gaxios";
 
 import { defineStore } from "pinia";
+import { Key } from "~~/models/enums/Update";
 import { Game } from "~~/models/interfaces/Game";
+import { Player } from "~~/models/interfaces/Player";
 import { Set } from "~~/models/interfaces/Set";
 
 export const useStore = defineStore("store", {
 	state: () => ({
 		game: {} as Game,
+		playing: false,
 		searchResult: {} as GaxiosResponse<ytV3.Schema$SearchListResponse>,
 	}),
 	actions: {
@@ -15,9 +18,16 @@ export const useStore = defineStore("store", {
 		async registerChannel(id: string) {
 			await $fetch("/api/channel/register?id=" + id);
 		},
-		update(key: string, id: string, value: object) {
+		update(key: Key, id: string, value: unknown) {
 			switch (key) {
-				case "set":
+				case Key.game:
+					if (id === "activeSet") {
+						this.game.activeSet = value as Set;
+					} else if (id === "players") {
+						this.game.players = value as Player[];
+					}
+					break;
+				case Key.set:
 					if (!value) {
 						this.game.sets = this.game.sets.filter((s) => s.id !== id);
 					} else {
@@ -28,9 +38,53 @@ export const useStore = defineStore("store", {
 						this.game.sets.push(value as Set);
 					}
 					break;
-				case "song":
+				case Key.song:
+					if (!this.game.activeSet) {
+						return;
+					}
+					if (!this.game.activeSetOrig) {
+						return;
+					}
+					if (id === "play") {
+						this.game.activeSet.songs.forEach((song) => {
+							song.playing = song.id === value;
+						});
+						this.game.activeSetOrig.songs.forEach((song) => {
+							song.playing = song.id === value;
+						});
+						this.playing = true;
+					} else if (id === "pause") {
+						this.playing = false;
+					} else if (id === "stop") {
+						this.game.activeSet.songs.forEach((song) => {
+							song.playing = false;
+						});
+						this.game.activeSetOrig.songs.forEach((song) => {
+							song.playing = false;
+						});
+						this.playing = false;
+					} else if (id === "reveal") {
+						this.game.activeSet.songs.forEach((song) => {
+							if (song.id === value) {
+								song.revealed = true;
+							}
+						});
+						this.game.activeSetOrig.songs.forEach((song) => {
+							if (song.id === value) {
+								song.revealed = true;
+							}
+						});
+					}
 					break;
-				case "player":
+				case Key.player:
+					if (id === "guess") {
+						const { playerid, songid, guess } = value as { playerid: string; songid: string; guess: string };
+						this.game.players.forEach((player) => {
+							if (player.id === playerid) {
+								player.guesses[songid] = guess;
+							}
+						});
+					}
 					break;
 
 				default:
@@ -49,35 +103,34 @@ export const useStore = defineStore("store", {
 			await $fetch("/api/set/add?id=" + this.game.id, { body: set, method: "POST" });
 		},
 		async deleteSet(set: Set) {
-			// this.game.sets = this.game.sets.filter((s) => s !== set);
 			await $fetch("/api/set/delete?id=" + this.game.id, { body: set, method: "POST" });
 		},
-		// async activateSet(setid: string) {
-		// 	this.songs = await $fetch(`/api/set/activate?setid=${setid}&id=${this.session.id}`);
-		// },
-		// async deactivateSet() {
-		// 	await $fetch("/api/set/deactivate?id=" + this.session.id);
-		// },
-		// async cleanSet() {
-		// 	await $fetch("/api/set/clean?id=" + this.session.id);
-		// },
-		// // Songs
-		// async saveSongs() {
-		// 	await $fetch("/api/songs/save?id=" + this.session.id, { body: this.songs, method: "POST" });
-		// },
-		// async loadSongs() {
-		// 	this.songs = await $fetch<Song[]>("/api/songs/load?id=" + this.session.id);
-		// },
+		async activateSet(setid: string) {
+			await $fetch(`/api/set/activate?setid=${setid}&id=${this.game.id}`);
+		},
+		async deactivateSet() {
+			await $fetch("/api/set/deactivate?id=" + this.game.id);
+		},
+		// Songs
+		async playSong(songid: string) {
+			await $fetch(`/api/song/play?songid=${songid}&id=${this.game.id}`);
+		},
+		async pauseSong(songid: string) {
+			await $fetch(`/api/song/pause?songid=${songid}&id=${this.game.id}`);
+		},
+		async stopSong() {
+			await $fetch(`/api/song/stop?id=${this.game.id}`);
+		},
+		async revealSong(songid: string) {
+			await $fetch(`/api/song/reveal?songid=${songid}&id=${this.game.id}`);
+		},
 		// // Players
-		// async savePlayer(player: Player) {
-		// 	await $fetch("/api/players/save?id=" + this.session.id, { body: player, method: "POST" });
-		// },
-		// async loadPlayers() {
-		// 	this.players = await $fetch("/api/players/load?id=" + this.session.id);
-		// },
-		// async removePlayers() {
-		// 	await $fetch("/api/players/remove?id=" + this.session.id);
-		// },
+		async guess(songid: string, playerid: string, guess: string) {
+			await $fetch(`/api/players/guess?guess=${guess}&playerid=${playerid}&songid=${songid}&id=${this.game.id}`);
+		},
+		async removePlayers() {
+			await $fetch(`/api/players/remove?id=${this.game.id}`);
+		},
 		async search(query: string) {
 			this.searchResult = (await $fetch("/api/youtube/search", {
 				params: { query },

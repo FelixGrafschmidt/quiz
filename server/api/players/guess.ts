@@ -14,11 +14,28 @@ export default defineEventHandler(async (event) => {
 	if (!gameid) {
 		return 401;
 	}
+	const playerid = url.searchParams.get("playerid");
+	if (!playerid) {
+		return 401;
+	}
+	const songid = url.searchParams.get("songid");
+	if (!songid) {
+		return 401;
+	}
+	const guess = url.searchParams.get("guess");
+	if (!guess) {
+		return 401;
+	}
 
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
-	game.activeSet = null;
 
-	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: null }));
+	game.players.forEach((player) => {
+		if (player.id === playerid) {
+			player.guesses[songid] = guess;
+		}
+	});
+
+	await client.publish(gameid, JSON.stringify({ key: Key.player, id: "guess", value: { playerid, songid, guess } }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

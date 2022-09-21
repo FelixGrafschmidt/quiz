@@ -7,7 +7,7 @@ client.connect();
 
 export default defineEventHandler(async (event) => {
 	if (!event.req.url) {
-		return 401;
+		return [];
 	}
 	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
 	const gameid = url.searchParams.get("id");
@@ -15,10 +15,24 @@ export default defineEventHandler(async (event) => {
 		return 401;
 	}
 
-	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
-	game.activeSet = null;
+	const game: Game = JSON.parse((await client.get(`game-${gameid}`)) || "{}");
+	const songid = url.searchParams.get("songid") || "";
 
-	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: null }));
+	if (!game.activeSet) {
+		return 401;
+	}
+	if (!game.activeSetOrig) {
+		return 401;
+	}
+
+	game.activeSetOrig.songs.forEach((song) => {
+		song.playing = song.id === songid;
+	});
+	game.activeSet.songs.forEach((song) => {
+		song.playing = song.id === songid;
+	});
+
+	await client.publish(gameid, JSON.stringify({ key: Key.song, id: "play", value: songid }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

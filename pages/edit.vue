@@ -26,7 +26,7 @@
 						bg-gray-600
 						w-20
 						px-2
-						white-space="nowrap"
+						whitespace="nowrap"
 						text-ellipsis
 						overflow-hidden
 						@click="selectSet(s)"
@@ -159,7 +159,7 @@
 					</button>
 				</div>
 				<div v-if="song.videoid" max-h="32vh">
-					<Player :videoid="song.videoid" />
+					<YTPlayer :videoid="song.videoid" />
 				</div>
 			</div>
 			<div self-end w-full min-h-28 flex="~ col" justify-end>
@@ -224,7 +224,7 @@
 		song.value = s;
 	}
 	function addSong() {
-		song.value = { id: nanoid(), name: "", tags: [], origin: "", revealed: false, videoid: "", type: "" };
+		song.value = { id: nanoid(), name: "", tags: [], origin: "", revealed: false, videoid: "", type: "", playing: false };
 	}
 	function deleteSong() {
 		if (song.value && set.value) {
@@ -249,10 +249,11 @@
 		if (!song.value) return;
 		song.value.tags = song.value?.tags.filter((t) => t !== tag) || [];
 	}
-	function openSearch() {
+	async function openSearch() {
 		store.searchResult = {} as GaxiosResponse<ytV3.Schema$SearchListResponse>;
 		query.value = `${song.value?.origin} ${song.value?.name} ${song.value?.type}`;
 		searchOpen.value = true;
+		await search();
 	}
 	function closeSearch() {
 		searchOpen.value = false;

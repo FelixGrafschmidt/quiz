@@ -5,5 +5,6 @@ export interface Game {
 	id: string;
 	players: Player[];
 	sets: Set[];
-	activeSet: string;
+	activeSet: Set | null;
+	activeSetOrig: Set | null;
 }

@@ -11,6 +11,7 @@
 	let player: Player;
 	onMounted(() => {
 		player = new Player(playerDiv.value || "");
+		player.setVolume(50);
 	});
 	watch(
 		() => props.playing,
