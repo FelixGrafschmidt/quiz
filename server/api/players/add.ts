@@ -1,6 +1,7 @@
 import { createClient } from "redis";
 import { Key } from "~~/models/enums/Update";
 import { Game } from "~~/models/interfaces/Game";
+import { Player } from "~~/models/interfaces/Player";
 
 const client = createClient({ url: "redis://127.0.0.1:6379", database: 1 });
 client.connect();
@@ -16,9 +17,12 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
-	game.activeSet = null;
 
-	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: null }));
+	const player = (await useBody(event)) as Player;
+	if (!game.players.find((p) => p.id === player.id)) {
+		game.players.push(player);
+	}
+	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "players", value: game.players }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

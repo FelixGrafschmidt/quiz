@@ -2,5 +2,5 @@ export interface Player {
 	name: string;
 	points: number;
 	id: string;
-	guesses: Record<string, number>;
+	guesses: Record<string, string>;
 }

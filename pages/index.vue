@@ -1,142 +1,144 @@
 <template>
-	<section v-if="!store.session.activeSet" class="mx-auto my-auto flex flex-row gap-64 [zoom:250%]">
-		<a target="_blank" :href="'/player?sessionid=' + store.session.id">
-			<span class="flex flex-row justify-center mb-4">Players</span>
+	<section v-if="!store.game.activeSet" mx-auto my-auto flex flex-row gap-64>
+		<a target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%]">
+			<span flex flex-row justify-center mb-4>Players</span>
 			<img :src="qrPlayer" />
 		</a>
-		<a target="_blank" :href="'/master?sessionid=' + store.session.id">
-			<span class="flex flex-row justify-center mb-4">Game Master</span>
+		<a target="_blank" :href="'/master?game=' + store.game.id" class="[zoom:250%]">
+			<span flex flex-row justify-center mb-4>Game Master</span>
 			<img :src="qrMaster" />
 		</a>
 	</section>
-	<section v-else class="mx-auto my-auto justify-center items-center text-lg [zoom:110%]" flex="~ row wrap" gap-8>
-		<div v-for="(song, i) in songs" :key="i" class="items-center justify-center h-90" border-8 rounded flex="~ col" w="1/6" bg-gray-700>
-			<div class="flex flex-col items-center min-h-35%" :class="{ 'filter-blur-md': !song.revealed }" py-2 gap-2>
-				<div class="text-3rem">
-					{{ (songs.indexOf(song) + 1).toString().padStart(2, "0") }}
-				</div>
-				<div class="flex flex-col w-full items-center justify-center">
-					<div class="text-xl font-extrabold flex flex-col text-center">
-						{{ song.origin }}
-					</div>
-					<div class="italic text-sm">{{ song.name }}</div>
-				</div>
-			</div>
-			<div class="py-2 flex-grow border-y-2 w-full">
-				<div class="flex flex-row flex-wrap gap-3 px-4">
-					<span v-for="(genre, k) in song.genres" :key="k">{{ genre }}</span>
-				</div>
-			</div>
-			<div flex="~ row" class="h-25%" gap-4 py-2>
-				<div v-for="(player, j) in players" :key="j" class="flex flex-col justify-center items-center gap-2">
-					<span :class="{ 'opacity-40': !player.guesses[song.id] }">
-						{{ player.name }}
-					</span>
-					<span
-						v-if="originalSongs.findIndex((s) => s.id === song.id) + 1 === player.guesses[song.id]"
-						:class="{ invisible: !song.revealed }"
-						class="text-2rem text-green"
-					>
-						O
-					</span>
-					<span v-else :class="{ invisible: !song.revealed }" class="text-2rem text-red">X</span>
-				</div>
-			</div>
+	<section v-else-if="set && setOrig">
+		<div hidden h-0>
+			<AutoPlayer :current="currentlyPlaying?.videoid" :playing="store.playing" />
 		</div>
+		<section mx-auto my-auto justify-center items-center text-lg class="[zoom:110%]" flex="~ row wrap" gap-8>
+			<div
+				v-for="(song, i) in setOrig.songs"
+				:key="i"
+				items-center
+				justify-center
+				h-90
+				border-8
+				rounded
+				flex="~ col"
+				w="1/6"
+				bg-gray-700
+			>
+				<div flex flex-col items-center min-h="35%" max-h="35%" w-full :class="{ 'filter-blur-md': !song.revealed }" pt-2>
+					<div text-3rem h="30%" mb-2>
+						{{ (setOrig.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
+					</div>
+					<div flex flex-col w-full items-center justify-center h-full>
+						<div ref="names" font-extrabold flex flex-col text-center max-w-full px-1>
+							{{ song.origin }}
+						</div>
+						<div italic text-sm>{{ song.name }}</div>
+					</div>
+				</div>
+				<div py-2 flex-grow border-y-2 w-full>
+					<div ref="tags" px-2 text-center>
+						{{ song.tags.join(" ~ ") }}
+					</div>
+				</div>
+				<div flex="~ row" h="25%" gap-4 py-2>
+					<div v-for="(player, j) in players" :key="j" flex flex-col justify-center items-center gap-2>
+						<span :class="{ 'opacity-40': !player.guesses[song.id] }">
+							{{ player.name }}
+						</span>
+						<span
+							v-if="alphabet[set.songs.findIndex((s) => s.id === song.id)!] === player.guesses[song.id]"
+							:class="{ invisible: !song.revealed }"
+							text-2rem
+							text-green
+						>
+							O
+						</span>
+						<span v-else :class="{ invisible: !song.revealed }" text-2rem text-red>X</span>
+					</div>
+				</div>
+			</div>
+		</section>
 	</section>
+	<section v-else></section>
 </template>
 
 <script setup lang="ts">
 	import { create, toDataURL } from "qrcode";
 	import { ComputedRef, useSSRContext } from "vue";
+	import fitty from "fitty";
 	import { Player } from "~~/models/interfaces/Player";
+	import { Set } from "~~/models/interfaces/Set";
 	import { Song } from "~~/models/interfaces/Song";
 
-	definePageMeta({
-		middleware: async (req) => {
-			const store = useStore();
-			const sessionidParam = req.query.sessionid;
+	const alphabet = [
+		"A",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"G",
+		"H",
+		"I",
+		"J",
+		"K",
+		"L",
+		"M",
+		"N",
+		"O",
+		"P",
+		"Q",
+		"R",
+		"S",
+		"T",
+		"U",
+		"V",
+		"W",
+		"X",
+		"Y",
+		"Z",
+	];
 
-			if (sessionidParam) {
-				await store.loadSession(sessionidParam.toString());
-				if (!store.session || !store.session.id) {
-					const id = (await store.createSession()).id;
-					const target = { path: "/", query: { sessionid: id } };
-					return navigateTo(target);
-				}
-			} else {
-				const id = (await store.createSession()).id;
-				const target = { path: "/", query: { sessionid: id } };
-				return navigateTo(target);
-			}
-		},
+	definePageMeta({
+		middleware: ["gameinit"],
+	});
+
+	onMounted(() => {
+		names.value?.forEach((name) => {
+			fitty(name, { maxSize: 20, minSize: 10 }).fit();
+		});
+		tags.value?.forEach((t) => {
+			fitty(t, { maxSize: 18 }).fit();
+		});
 	});
 
 	const store = useStore();
 	let qrMaster = "";
 	let qrPlayer = "";
-	const songs: ComputedRef<Song[]> = computed(() => shuffleArray(store.songs));
-	const originalSongs: ComputedRef<Song[]> = computed(() => store.songs);
-	const players: ComputedRef<Player[]> = computed(() => store.players);
+	const names = ref<HTMLElement[] | null>(null);
+	const tags = ref<HTMLElement[] | null>(null);
+	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
+	const setOrig: ComputedRef<Set | null> = computed(() => store.game.activeSetOrig);
+	const players: ComputedRef<Player[] | null> = computed(() => store.game.players);
+
+	const currentlyPlaying: ComputedRef<Song | undefined> = computed(() => store.game.activeSet?.songs.find((song) => song.playing));
 
 	if (process.server && useSSRContext()?.req.url) {
 		const req = useSSRContext()?.req;
 		const urlMaster = new URL("/master", `http://${req.headers.host}`);
-		urlMaster.searchParams.append("sessionid", store.session.id);
+		urlMaster.searchParams.append("game", store.game.id);
 		qrMaster = await toDataURL(create(urlMaster.toString()).segments);
 		const urlPlayers = new URL("/player", `http://${req.headers.host}`);
-		urlPlayers.searchParams.append("sessionid", store.session.id);
+		urlPlayers.searchParams.append("game", store.game.id);
 		qrPlayer = await toDataURL(create(urlPlayers.toString()).segments);
 	} else {
 		const url = new URL(window.location.href);
 		url.pathname = "/master";
-		url.searchParams.append("sessionid", store.session.id);
+		url.searchParams.append("game", store.game.id);
 		qrMaster = await toDataURL(create(url.toString()).segments);
 		url.pathname = "/player";
 		qrPlayer = await toDataURL(create(url.toString()).segments);
-	}
-
-	await store.loadSongs();
-	await store.loadPlayers();
-
-	const interval = setInterval(async () => {
-		await store.loadSession();
-		await store.loadSongs();
-		await store.loadPlayers();
-	}, 1000);
-
-	onBeforeUnmount(() => {
-		clearInterval(interval);
-	});
-
-	function shuffleArray(array: Array<Song>) {
-		if (!array) return array;
-		const arrayCopy = JSON.parse(JSON.stringify(array)) as Array<Song>;
-		let seed = array.reduce((prev, curr) => {
-			prev += curr.name.length;
-			return prev;
-		}, 0);
-
-		let m = arrayCopy.length;
-		let t: Song;
-		let i: number;
-
-		// While there remain elements to shuffle…
-		while (m) {
-			// Pick a remaining element…
-			i = Math.floor(random(seed) * m--);
-
-			// And swap it with the current element.
-			t = arrayCopy[m];
-			arrayCopy[m] = arrayCopy[i];
-			arrayCopy[i] = t;
-			++seed;
-		}
-		return arrayCopy;
-	}
-
-	function random(seed: number) {
-		const x = Math.sin(seed++) * 10000;
-		return x - Math.floor(x);
 	}
 </script>

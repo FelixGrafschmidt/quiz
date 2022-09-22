@@ -24,6 +24,7 @@ module.exports = {
 		"no-console": "off",
 		"no-debugger": "off",
 		"vue/multi-word-component-names": "off",
+		"no-case-declarations": "off",
 	},
 	ignorePatterns: [".nuxt/"],
 };

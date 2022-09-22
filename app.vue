@@ -4,10 +4,22 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+	onMounted(() => {
+		try {
+			const ws = new WebSocket("ws://localhost:4000/?channel=" + useRoute().query.game?.toString());
+			ws.onmessage = ({ data }) => {
+				const { key, id, value } = JSON.parse(data);
+				useStore().update(key, id, value);
+			};
+		} catch (err) {
+			console.log(err);
+		}
+	});
+</script>
 
 <style>
-	@import "@unocss/reset/antfu.css";
+	@import "@unocss/reset/tailwind.css";
 	html {
 		scrollbar-gutter: unset;
 	}
