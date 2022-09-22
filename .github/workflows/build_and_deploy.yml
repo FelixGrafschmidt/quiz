@@ -30,7 +30,7 @@ jobs:
 
             # Runs a single command using the runners shell
             - name: Run a one-line script
-              run: yarn && yarn build && cd pubsub_server && yarn && yarn build
+              run: yarn && yarn build && cd pubsub_server && yarn
 
             - name: copy file via ssh password
               env:
