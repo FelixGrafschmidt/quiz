@@ -59,7 +59,7 @@ jobs:
                   port: $PORT
                   username: $USERNAME
                   password: $PASSWORD
-                  script: pm2 restart quiz
+                  script: pm2 restart quiz && pm2 restart pubsub_server
             - name: delete build file via ssh
               env:
                   HOST: ${{ secrets.HOST }}

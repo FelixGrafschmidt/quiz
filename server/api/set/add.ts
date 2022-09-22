@@ -4,7 +4,8 @@ import { Game } from "~~/models/interfaces/Game";
 import { Set } from "~~/models/interfaces/Set";
 import { removeDuplicates } from "~~/utils/arrays";
 
-const client = createClient({ url: "redis://127.0.0.1:6379", database: 1 });
+const port = parseInt(process.env.REDIS_PORT || "6378");
+const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
 client.connect();
 
 export default defineEventHandler(async (event) => {
