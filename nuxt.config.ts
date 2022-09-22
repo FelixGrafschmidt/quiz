@@ -27,7 +27,7 @@ export default defineNuxtConfig({
 		safelist: ["invisible"],
 	},
 	runtimeConfig: {
-		googleApiKey: process.env.NUXT_GOOGLE_API_KEY,
+		googleApiKey: "",
 		public: {
 			dev: process.env.NODE_ENV !== "production",
 		},

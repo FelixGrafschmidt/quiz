@@ -12,6 +12,7 @@ export default defineEventHandler(async (event) => {
 	if (!query) {
 		return {};
 	}
+	console.log(useRuntimeConfig());
 	console.log(useRuntimeConfig().googleApiKey);
 
 	const params: ytV3.Params$Resource$Search$List = {
