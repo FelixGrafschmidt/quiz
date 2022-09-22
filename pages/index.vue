@@ -10,25 +10,36 @@
 		</a>
 	</section>
 	<section v-else-if="set && setOrig">
-		<div invisible h-0>
+		<div hidden h-0>
 			<AutoPlayer :current="currentlyPlaying?.videoid" :playing="store.playing" />
 		</div>
 		<section mx-auto my-auto justify-center items-center text-lg class="[zoom:110%]" flex="~ row wrap" gap-8>
-			<div v-for="(song, i) in set.songs" :key="i" items-center justify-center h-90 border-8 rounded flex="~ col" w="1/6" bg-gray-700>
+			<div
+				v-for="(song, i) in setOrig.songs"
+				:key="i"
+				items-center
+				justify-center
+				h-90
+				border-8
+				rounded
+				flex="~ col"
+				w="1/6"
+				bg-gray-700
+			>
 				<div flex flex-col items-center min-h="35%" max-h="35%" w-full :class="{ 'filter-blur-md': !song.revealed }" pt-2>
 					<div text-3rem h="30%" mb-2>
-						{{ (set.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
+						{{ (setOrig.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
 					</div>
 					<div flex flex-col w-full items-center justify-center h-full>
-						<div ref="names" font-extrabold flex flex-col text-center max-w-full mx-1>
+						<div ref="names" font-extrabold flex flex-col text-center max-w-full px-1>
 							{{ song.origin }}
 						</div>
 						<div italic text-sm>{{ song.name }}</div>
 					</div>
 				</div>
 				<div py-2 flex-grow border-y-2 w-full>
-					<div ref="tags" px-2>
-						{{ song.tags.join(" | ") }}
+					<div ref="tags" px-2 text-center>
+						{{ song.tags.join(" ~ ") }}
 					</div>
 				</div>
 				<div flex="~ row" h="25%" gap-4 py-2>
@@ -37,7 +48,7 @@
 							{{ player.name }}
 						</span>
 						<span
-							v-if="setOrig.songs.find((s) => s.id === song.id)!.id === player.guesses[song.id]"
+							v-if="alphabet[set.songs.findIndex((s) => s.id === song.id)!] === player.guesses[song.id]"
 							:class="{ invisible: !song.revealed }"
 							text-2rem
 							text-green
@@ -60,6 +71,35 @@
 	import { Player } from "~~/models/interfaces/Player";
 	import { Set } from "~~/models/interfaces/Set";
 	import { Song } from "~~/models/interfaces/Song";
+
+	const alphabet = [
+		"A",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"G",
+		"H",
+		"I",
+		"J",
+		"K",
+		"L",
+		"M",
+		"N",
+		"O",
+		"P",
+		"Q",
+		"R",
+		"S",
+		"T",
+		"U",
+		"V",
+		"W",
+		"X",
+		"Y",
+		"Z",
+	];
 
 	definePageMeta({
 		middleware: ["gameinit"],

@@ -19,7 +19,7 @@
 </script>
 
 <style>
-	@import "@unocss/reset/antfu.css";
+	@import "@unocss/reset/tailwind.css";
 	html {
 		scrollbar-gutter: unset;
 	}

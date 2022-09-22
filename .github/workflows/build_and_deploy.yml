@@ -30,7 +30,7 @@ jobs:
 
             # Runs a single command using the runners shell
             - name: Run a one-line script
-              run: yarn install && yarn build
+              run: yarn && yarn build && cd pubsub_server && yarn && yarn build
 
             - name: copy file via ssh password
               env:
@@ -44,7 +44,7 @@ jobs:
                   port: $PORT
                   username: $USERNAME
                   password: $PASSWORD
-                  source: ".output/,ecosystem.config.js,nuxt.config.ts"
+                  source: ".output/,ecosystem.config.js,nuxt.config.ts,pubsub_server/"
                   target: "/srv/quiz/"
                   debug: true
             - name: restart via ssh

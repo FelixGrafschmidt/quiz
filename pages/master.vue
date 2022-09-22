@@ -55,7 +55,7 @@
 			>
 				<div flex="~ row grow" justify-around items-center w-full pb-4 min-h-40>
 					<div w="60%" mx-2>
-						<div text-3rem items-center>
+						<div text-3rem justify-center flex="~ row">
 							{{ (setOrig.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
 						</div>
 						<div flex flex-col w-full items-center>

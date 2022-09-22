@@ -128,6 +128,9 @@ export const useStore = defineStore("store", {
 		async guess(songid: string, playerid: string, guess: string) {
 			await $fetch(`/api/players/guess?guess=${guess}&playerid=${playerid}&songid=${songid}&id=${this.game.id}`);
 		},
+		async add(player: Player) {
+			await $fetch(`/api/players/add?id=${this.game.id}`, { body: player, method: "POST" });
+		},
 		async removePlayers() {
 			await $fetch(`/api/players/remove?id=${this.game.id}`);
 		},

@@ -1,18 +1,28 @@
-import { Session } from "~~/models/interfaces/Game";
+import { createClient } from "redis";
+import { Key } from "~~/models/enums/Update";
+import { Game } from "~~/models/interfaces/Game";
 import { Player } from "~~/models/interfaces/Player";
+
+const client = createClient({ url: "redis://127.0.0.1:6379", database: 1 });
+client.connect();
 
 export default defineEventHandler(async (event) => {
 	if (!event.req.url) {
-		return [];
+		return 401;
 	}
 	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
-	const sessionid = url.searchParams.get("id");
-	const session = (await useStorage().getItem("redis:session-" + sessionid)) as Session;
-	const body = (await useBody(event)) as Player;
-	if (!session.players.includes(body.id)) {
-		session.players.push(body.id);
+	const gameid = url.searchParams.get("id");
+	if (!gameid) {
+		return 401;
 	}
-	await useStorage().setItem(`redis:player-${body.id}`, body);
-	await useStorage().setItem(`redis:session-${sessionid}`, session);
+
+	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
+
+	const player = (await useBody(event)) as Player;
+	if (!game.players.find((p) => p.id === player.id)) {
+		game.players.push(player);
+	}
+	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "players", value: game.players }));
+	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

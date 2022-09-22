@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 		return 401;
 	}
 	const guess = url.searchParams.get("guess");
-	if (!guess) {
+	if (guess === null) {
 		return 401;
 	}
 
