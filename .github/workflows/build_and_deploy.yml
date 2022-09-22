@@ -30,7 +30,7 @@ jobs:
 
             # Runs a single command using the runners shell
             - name: Run a one-line script
-              run: cat "NUXT_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" > .env
+              run: echo "NUXT_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" > .env
             - name: Run a one-line script
               run: yarn && yarn build && cd pubsub_server && yarn
 
