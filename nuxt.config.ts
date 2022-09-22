@@ -28,6 +28,9 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		googleApiKey: "",
+		public: {
+			dev: process.env.NODE_ENV !== "production",
+		},
 	},
 	vue: {
 		config: {
