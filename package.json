@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
@@ -14,6 +15,7 @@
     "@vueuse/core": "^9.2.0",
     "axios": "^0.27.2",
     "events": "^3.3.0",
+    "fitty": "^2.3.6",
     "nanoid": "^4.0.0",
     "nuxt": "3.0.0-rc.11",
     "nuxt-icon": "^0.1.6",

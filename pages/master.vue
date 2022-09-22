@@ -69,7 +69,7 @@
 						<div p-4 @click="song.playing && store.playing ? pause(song) : play(song)">
 							<Icon h-8 w-8 :name="song.playing && store.playing ? 'fa:pause' : 'fa:play'" />
 						</div>
-						<div p-4 @click="stop">
+						<div p-4 @click="song.playing ? stop() : undefined">
 							<Icon :class="{ invisible: !song.playing }" h-8 w-8 name="fa:stop" />
 						</div>
 					</div>
