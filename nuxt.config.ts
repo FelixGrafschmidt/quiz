@@ -1,9 +1,6 @@
-import path from "path";
 import { presetWind, presetAttributify } from "unocss";
-import * as dotenv from "dotenv";
 import { defineNuxtConfig } from "nuxt/config";
 import { presetScrollbar } from "unocss-preset-scrollbar";
-dotenv.config({ path: path.join(__dirname, ".env") });
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
