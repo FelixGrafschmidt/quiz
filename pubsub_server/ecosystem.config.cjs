@@ -1,7 +1,7 @@
 module.exports = {
 	apps: [
 		{
-			name: "pubsub server",
+			name: "pubsub_server",
 			exec_mode: "cluster",
 			instances: "max",
 			script: "yarn",

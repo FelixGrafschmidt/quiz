@@ -9,7 +9,7 @@
 		try {
 			const ws = useRuntimeConfig().dev
 				? new WebSocket(`ws://${window.location.hostname}:4000/ws?channel=` + useRoute().query.game?.toString())
-				: new WebSocket(`ws://${window.location.hostname}/ws?channel=` + useRoute().query.game?.toString());
+				: new WebSocket(`wss://${window.location.hostname}/ws?channel=` + useRoute().query.game?.toString());
 			ws.onmessage = ({ data }) => {
 				const { key, id, value } = JSON.parse(data);
 				useStore().update(key, id, value);
