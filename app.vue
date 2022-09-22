@@ -7,7 +7,7 @@
 <script setup lang="ts">
 	onMounted(() => {
 		try {
-			const ws = new WebSocket("ws://localhost:4000/?channel=" + useRoute().query.game?.toString());
+			const ws = new WebSocket(`ws://${window.location.hostname}:4000/?channel=` + useRoute().query.game?.toString());
 			ws.onmessage = ({ data }) => {
 				const { key, id, value } = JSON.parse(data);
 				useStore().update(key, id, value);
