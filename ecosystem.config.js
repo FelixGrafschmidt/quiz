@@ -3,7 +3,7 @@ module.exports = {
 		{
 			name: "quiz",
 			exec_mode: "cluster",
-			instances: "max",
+			instances: 1,
 			script: "./.output/server/index.mjs",
 			env: {
 				PORT: 3001,

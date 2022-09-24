@@ -15,7 +15,7 @@ const client = createClient({ url: REDIS_SERVER });
 await client.connect();
 await client.select(1);
 
-const server = new WebSocketServer({ port: WEB_SOCKET_PORT });
+const server = new WebSocketServer({ path: "/ws", port: 4000 });
 
 let sockets: Array<{ id: string; socket: WebSocket }> = [];
 

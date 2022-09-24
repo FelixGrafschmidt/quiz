@@ -30,7 +30,9 @@ jobs:
 
             # Runs a single command using the runners shell
             - name: Run a one-line script
-              run: yarn && yarn build && cd pubsub_server && yarn && yarn build
+              env:
+                GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+              run: echo "NUXT_GOOGLE_API_KEY=$GOOGLE_API_KEY" > .env && yarn && yarn build && cd pubsub_server && yarn
 
             - name: copy file via ssh password
               env:
@@ -59,7 +61,7 @@ jobs:
                   port: $PORT
                   username: $USERNAME
                   password: $PASSWORD
-                  script: pm2 restart quiz
+                  script: pm2 restart quiz && pm2 restart pubsub_server
             - name: delete build file via ssh
               env:
                   HOST: ${{ secrets.HOST }}

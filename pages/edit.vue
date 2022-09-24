@@ -1,5 +1,5 @@
 <template>
-	<section my-8 mx-4 flex="~ row" justify-start>
+	<section py-8 mx-4 flex="~ row" justify-start>
 		<template v-if="!searchOpen">
 			<section bg-gray-700 rounded p-4 h-90vh mr="1%" w="30%" min-w="30%">
 				<div flex="~ row items-center gap-4">

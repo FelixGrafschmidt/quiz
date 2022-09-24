@@ -1,5 +1,5 @@
 <template>
-	<section v-if="!store.game.activeSet" mx-auto my-auto flex flex-row gap-64>
+	<section v-if="!store.game.activeSet" mx-auto items-center h-screen my-auto gap-64 justify-center flex="~ row">
 		<a target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%]">
 			<span flex flex-row justify-center mb-4>Players</span>
 			<img :src="qrPlayer" />

@@ -27,7 +27,10 @@ export default defineNuxtConfig({
 		safelist: ["invisible"],
 	},
 	runtimeConfig: {
-		googleApiKey: "",
+		googleApiKey: process.env.NUXT_GOOGLE_API_KEY,
+		public: {
+			dev: process.env.NODE_ENV !== "production",
+		},
 	},
 	vue: {
 		config: {
