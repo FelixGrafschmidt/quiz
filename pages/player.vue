@@ -4,7 +4,7 @@
 			<AutoPlayer :current="current" :playing="playing" />
 		</div>
 		<client-only>
-			<label v-if="!store.game.players.find((p) => p.id === playerid)">
+			<label v-if="!player">
 				<span>Please enter your name</span>
 				<div mt-2 flex="~ row">
 					<input
@@ -112,7 +112,8 @@
 	async function savePlayer() {
 		let p = player.value;
 		if (!p) {
-			p = { name: name.value, id: nanoid(), points: 0, guesses: {} };
+			playerid.value = nanoid();
+			p = { name: name.value, id: playerid.value, points: 0, guesses: {} };
 		}
 		await store.add(p);
 		start.value = true;
