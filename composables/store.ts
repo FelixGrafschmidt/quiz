@@ -42,16 +42,10 @@ export const useStore = defineStore("store", {
 					if (!this.game.activeSet) {
 						return;
 					}
-					// if (!this.game.activeSetOrig) {
-					// 	return;
-					// }
 					if (id === "play") {
 						this.game.activeSet.songs.forEach((song) => {
 							song.playing = song.id === value;
 						});
-						// this.game.activeSetOrig.songs.forEach((song) => {
-						// 	song.playing = song.id === value;
-						// });
 						this.playing = true;
 					} else if (id === "pause") {
 						this.playing = false;
@@ -59,9 +53,6 @@ export const useStore = defineStore("store", {
 						this.game.activeSet.songs.forEach((song) => {
 							song.playing = false;
 						});
-						// this.game.activeSetOrig.songs.forEach((song) => {
-						// 	song.playing = false;
-						// });
 						this.playing = false;
 					} else if (id === "reveal") {
 						this.game.activeSet.songs.forEach((song) => {
@@ -69,11 +60,6 @@ export const useStore = defineStore("store", {
 								song.revealed = true;
 							}
 						});
-						// this.game.activeSetOrig.songs.forEach((song) => {
-						// 	if (song.id === value) {
-						// 		song.revealed = true;
-						// 	}
-						// });
 					}
 					break;
 				case Key.player:
