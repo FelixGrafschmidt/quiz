@@ -4,11 +4,11 @@
 			<AutoPlayer :current="current" :playing="playing" />
 		</div>
 		<client-only>
-			<label v-if="!store.game.players.find((p) => p.id === player.id)">
+			<label v-if="!store.game.players.find((p) => p.id === playerid)">
 				<span>Please enter your name</span>
 				<div mt-2 flex="~ row">
 					<input
-						v-model="player.name"
+						v-model="name"
 						type="text"
 						class="px-2 py-1 rounded-l text-black h-8"
 						@keydown="$event.code === 'Enter' ? savePlayer() : undefined"
@@ -44,7 +44,7 @@
 								</button>
 							</div>
 							{{ song.type }}
-							<section v-if="set" flex="~ col" gap-2 w-full mt-2>
+							<section v-if="set && player" flex="~ col" gap-2 w-full mt-2>
 								<div
 									v-for="(letter, answer, j) in set.options"
 									:key="j"
@@ -99,42 +99,38 @@
 	const current: Ref<string> = ref("");
 	const playing: Ref<boolean> = ref(false);
 	const songs: ComputedRef<Song[] | undefined> = computed(() => store.game.activeSet?.songs);
+	const player: ComputedRef<Player | undefined> = computed(() => store.game.players.find((p) => p.id === playerid.value));
 	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
-	let player: Player = { name: "", id: nanoid(), points: 0, guesses: {} };
+	const playerid = ref("");
+	const name = ref("");
 
 	if (process.client) {
-		const id = window.localStorage.getItem("id");
-		const p = store.game.players.find((p) => p.id === id);
-		if (id && p) {
-			player = p;
-			start.value = true;
-		}
+		playerid.value = window.localStorage.getItem("id") || "";
 		loading.value = false;
 	}
 
-	onMounted(() => {
-		if (window.onbeforeunload) {
-			window.onbeforeunload = async () => {
-				await store.removePlayer(player.id);
-			};
-		}
-	});
-
 	async function savePlayer() {
-		await store.add(player);
+		let p = player.value;
+		if (!p) {
+			p = { name: name.value, id: nanoid(), points: 0, guesses: {} };
+		}
+		await store.add(p);
 		start.value = true;
-		window.localStorage.setItem("id", player.id);
+		window.localStorage.setItem("id", playerid.value);
 	}
 
 	async function guess(songid: string, guess: string) {
-		const currentPosition = Object.values(player.guesses).findIndex((i) => i === guess);
+		if (!player.value) {
+			return;
+		}
+		const currentPosition = Object.values(player.value.guesses).findIndex((i) => i === guess);
 		if (currentPosition >= 0) {
 			if (window.confirm(`${guess} is already selected for song nr. ${currentPosition + 1}. Do you want to switch?`)) {
-				await store.guess(songid, player.id, guess);
-				await store.guess(Object.keys(player.guesses)[currentPosition], player.id, "");
+				await store.guess(songid, playerid.value, guess);
+				await store.guess(Object.keys(player.value.guesses)[currentPosition], playerid.value, "");
 			}
 		} else {
-			await store.guess(songid, player.id, guess);
+			await store.guess(songid, playerid.value, guess);
 		}
 	}
 
