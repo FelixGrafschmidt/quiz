@@ -18,9 +18,9 @@
 			</label>
 			<template v-else>
 				<span v-if="!store.game.activeSet" text-lg> Please wait for the game to start. </span>
-				<section v-else-if="songs">
-					<swiper ref="swiperRef" :slides-per-view="1" direction="horizontal" h-screen @after-init="swiperInit">
-						<swiper-slide v-for="(song, i) in songs" :key="i" flex="~ col" items-center justify-around h-full py-4 px-2>
+				<section v-else-if="songs" overflow-y-auto>
+					<swiper ref="swiperRef" :slides-per-view="1" direction="horizontal" @after-init="swiperInit">
+						<swiper-slide v-for="(song, i) in songs" :key="i" flex="~ col" items-center justify-evenly h-full py-4 px-2>
 							<div
 								flex="~ row"
 								border
@@ -43,7 +43,8 @@
 									/>
 								</button>
 							</div>
-							<section v-if="set" flex="~ col" gap-2 w-full>
+							{{ song.type }}
+							<section v-if="set" flex="~ col" gap-2 w-full mt-2>
 								<div
 									v-for="(letter, answer, j) in set.options"
 									:key="j"

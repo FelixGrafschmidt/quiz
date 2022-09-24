@@ -4,13 +4,13 @@
 
 <script setup lang="ts">
 	import Player from "yt-player";
-	const props = defineProps({ playing: Boolean, current: { type: String, default: "" } });
+	const props = defineProps({ playing: Boolean, current: { type: String, default: "" }, height: { type: Number, default: 0 } });
 	const current = ref("");
 	const playing = ref(false);
 	const playerDiv = ref<HTMLElement | null>(null);
 	let player: Player;
 	onMounted(() => {
-		player = new Player(playerDiv.value || "");
+		player = new Player(playerDiv.value || "", { height: (props.height * window.innerHeight) / 100, width: 480 });
 		player.setVolume(50);
 	});
 	watch(
