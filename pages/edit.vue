@@ -98,8 +98,8 @@
 				</section>
 			</div>
 			<div h="1/2" w-full>
-				<div mx-auto max-h="40vh">
-					<AutoPlayer v-if="set" :current="current" :playing="playing" />
+				<div mx-auto>
+					<AutoPlayer v-if="set" :current="current" :playing="playing" :height="40" />
 				</div>
 			</div>
 		</section>
@@ -158,8 +158,8 @@
 						<span v-else>Add</span>
 					</button>
 				</div>
-				<div v-if="song.videoid" max-h="32vh">
-					<YTPlayer :videoid="song.videoid" />
+				<div v-if="song.videoid">
+					<YTPlayer :videoid="song.videoid" :height="32" />
 				</div>
 			</div>
 			<div self-end w-full min-h-28 flex="~ col" justify-end>
