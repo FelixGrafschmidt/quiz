@@ -6,6 +6,7 @@
       "@pinia/nuxt"
     ],
     "strict": true,
-    "noImplicitAny": true
-  }
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true
+  },
 }

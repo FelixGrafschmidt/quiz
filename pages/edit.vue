@@ -205,7 +205,7 @@
 		song.value = null;
 	}
 	function addSet() {
-		set.value = { id: nanoid(), name: "", songs: [] };
+		set.value = { id: nanoid(), name: "", songs: [], options: {} };
 		song.value = null;
 	}
 	function deleteSet() {
@@ -224,7 +224,7 @@
 		song.value = s;
 	}
 	function addSong() {
-		song.value = { id: nanoid(), name: "", tags: [], origin: "", revealed: false, videoid: "", type: "", playing: false };
+		song.value = { id: nanoid(), name: "", tags: [], origin: "", revealed: false, videoid: "", type: "", playing: false, answer: "" };
 	}
 	function deleteSong() {
 		if (song.value && set.value) {

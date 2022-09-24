@@ -7,4 +7,5 @@ export interface Song {
 	type: string;
 	revealed: boolean;
 	playing: boolean;
+	answer: string;
 }

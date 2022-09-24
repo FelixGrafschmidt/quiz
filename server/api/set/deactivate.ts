@@ -19,6 +19,8 @@ export default defineEventHandler(async (event) => {
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
 	game.activeSet = null;
 
+	game.players.forEach((player) => (player.guesses = {}));
+
 	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: null }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;

@@ -15,15 +15,11 @@ export default defineEventHandler(async (event) => {
 	if (!gameid) {
 		return 401;
 	}
-	const playerid = url.searchParams.get("playerid");
-	if (!playerid) {
-		return 401;
-	}
 
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
-	game.players = game.players.filter((player) => player.id !== playerid);
+	game.players = [];
 
-	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "players", value: game.players }));
+	await client.publish(gameid, JSON.stringify({ key: Key.game, id: "players", value: [] }));
 	await client.set("game-" + gameid, JSON.stringify(game));
 	return true;
 });

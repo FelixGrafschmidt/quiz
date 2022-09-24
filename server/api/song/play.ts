@@ -22,13 +22,13 @@ export default defineEventHandler(async (event) => {
 	if (!game.activeSet) {
 		return 401;
 	}
-	if (!game.activeSetOrig) {
-		return 401;
-	}
+	// if (!game.activeSetOrig) {
+	// 	return 401;
+	// }
 
-	game.activeSetOrig.songs.forEach((song) => {
-		song.playing = song.id === songid;
-	});
+	// game.activeSetOrig.songs.forEach((song) => {
+	// 	song.playing = song.id === songid;
+	// });
 	game.activeSet.songs.forEach((song) => {
 		song.playing = song.id === songid;
 	});

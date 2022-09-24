@@ -4,10 +4,15 @@
 			<AutoPlayer :current="current" :playing="playing" />
 		</div>
 		<client-only>
-			<label v-if="!start">
+			<label v-if="!store.game.players.find((p) => p.id === player.id)">
 				<span>Please enter your name</span>
 				<div mt-2 flex="~ row">
-					<input v-model="player.name" type="text" class="px-2 py-1 rounded-l text-black h-8" />
+					<input
+						v-model="player.name"
+						type="text"
+						class="px-2 py-1 rounded-l text-black h-8"
+						@keydown="$event.code === 'Enter' ? savePlayer() : undefined"
+					/>
 					<button class="rounded-r bg-gray-600 px-8" @click="savePlayer">Save</button>
 				</div>
 			</label>
@@ -38,28 +43,28 @@
 									/>
 								</button>
 							</div>
-							<section flex="~ col" gap-2 w-full>
+							<section v-if="set" flex="~ col" gap-2 w-full>
 								<div
-									v-for="(s, j) in songs"
+									v-for="(letter, answer, j) in set.options"
 									:key="j"
 									border-gray-700
 									border-2
 									:class="{
-										'border-teal': player.guesses[song.id] === alphabet[j],
-										'opacity-60':
-											player.guesses[song.id] !== alphabet[j] && Object.values(player.guesses).includes(alphabet[j]),
+										'border-teal': player.guesses[song.id] === letter,
+										'opacity-60': player.guesses[song.id] !== letter && Object.values(player.guesses).includes(letter),
 									}"
 									bg-gray-700
 									h-12
 									px-2
 									flex="~ row"
 									items-center
+									cursor-pointer
 									rounded
-									@click="guess(song.id, alphabet[j])"
+									@click="guess(song.id, letter)"
 								>
-									<span pr-2 w-6 text-xl flex="~ row" justify-center> {{ alphabet[j] }} </span>
+									<span pr-2 w-6 text-xl flex="~ row" justify-center> {{ letter }} </span>
 									<div w="90%" text-start>
-										<span ref="tags" text-start> {{ s.tags.join(" ~ ") }} </span>
+										<span ref="tags" text-start> {{ answer.split("|")[1] }} </span>
 									</div>
 								</div>
 							</section>
@@ -79,35 +84,7 @@
 	import fitty from "fitty";
 	import { Player } from "~~/models/interfaces/Player";
 	import { Song } from "~~/models/interfaces/Song";
-
-	const alphabet = [
-		"A",
-		"B",
-		"C",
-		"D",
-		"E",
-		"F",
-		"G",
-		"H",
-		"I",
-		"J",
-		"K",
-		"L",
-		"M",
-		"N",
-		"O",
-		"P",
-		"Q",
-		"R",
-		"S",
-		"T",
-		"U",
-		"V",
-		"W",
-		"X",
-		"Y",
-		"Z",
-	];
+	import { Set } from "~~/models/interfaces/Set";
 
 	definePageMeta({
 		middleware: ["game"],
@@ -121,6 +98,7 @@
 	const current: Ref<string> = ref("");
 	const playing: Ref<boolean> = ref(false);
 	const songs: ComputedRef<Song[] | undefined> = computed(() => store.game.activeSet?.songs);
+	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
 	let player: Player = { name: "", id: nanoid(), points: 0, guesses: {} };
 
 	if (process.client) {
@@ -132,6 +110,14 @@
 		}
 		loading.value = false;
 	}
+
+	onMounted(() => {
+		if (window.onbeforeunload) {
+			window.onbeforeunload = async () => {
+				await store.removePlayer(player.id);
+			};
+		}
+	});
 
 	async function savePlayer() {
 		await store.add(player);

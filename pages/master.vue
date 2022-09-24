@@ -5,9 +5,16 @@
 			<button w="1/2" h-16 flex items-center justify-center @click="mode = 'game'">Game</button>
 		</section>
 		<section v-if="mode === 'prep'" divide-y flex flex-col>
-			<div py-4 px-2>
+			<div py-4 px-2 flex="~ col">
 				<span text-xl mb-2>Connected Players</span>
-				<span v-for="(player, i) in players" :key="i">
+				<span
+					v-for="(player, i) in players"
+					:key="i"
+					cursor-pointer
+					w-fit
+					hover="text-red-600 line-through"
+					@click="store.removePlayer(player.id)"
+				>
 					{{ player.name }}
 				</span>
 			</div>
@@ -41,22 +48,12 @@
 				<button w="45%" px-4 h-16 rounded bg-red-800 @click="removePlayers()">Remove Players</button>
 			</div>
 		</section>
-		<section v-else-if="mode === 'game' && setOrig" mx-auto my-auto justify-center items-center mt-4 flex="~ col" gap-8>
-			<div
-				v-for="(song, i) in setOrig.songs"
-				:key="i"
-				items-center
-				justify-center
-				w="16rem"
-				border-8
-				rounded
-				flex="~ col"
-				bg-gray-700
-			>
+		<section v-else-if="mode === 'game' && set" mx-auto my-auto justify-center items-center mt-4 flex="~ col" gap-8>
+			<div v-for="(song, i) in set.songs" :key="i" items-center justify-center w="16rem" border-8 rounded flex="~ col" bg-gray-700>
 				<div flex="~ row grow" justify-around items-center w-full pb-4 min-h-40>
 					<div w="60%" mx-2>
 						<div text-3rem justify-center flex="~ row">
-							{{ (setOrig.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
+							{{ (set.songs.indexOf(song) + 1).toString().padStart(2, "0") }}
 						</div>
 						<div flex flex-col w-full items-center>
 							<div text-xl font-extrabold text-center>
@@ -97,7 +94,7 @@
 	});
 
 	const store = useStore();
-	const setOrig: ComputedRef<Set | null> = computed(() => store.game.activeSetOrig);
+	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
 	const players: ComputedRef<Player[]> = computed(() => store.game.players);
 	const mode = ref(store.game.activeSet ? "game" : "prep");
 	const editLink = computed(() => {
