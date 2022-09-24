@@ -13,7 +13,7 @@ export default defineEventHandler(async () => {
 		players: [],
 		sets: [],
 		activeSet: null,
-		activeSetOrig: null,
+		// activeSetOrig: null,
 	};
 	await client.set(`game-${id}`, JSON.stringify(game));
 	return game;
