@@ -64,23 +64,49 @@
 		</template>
 		<section v-else flex="~ col" gap-4 w="61%" bg-gray-700 rounded p-4 h-90vh mr="1%" min-w="61%">
 			<div h="1/2" relative>
-				<label>
-					<span>Enter query</span>
-					<div mt-2 flex="~ row">
-						<input
-							v-model="query"
-							name="animequiz-search"
-							type="text"
-							px-2
-							py-1
-							rounded-l
-							text-black
-							h-8
-							@keydown="$event.code === 'Enter' ? search() : undefined"
-						/>
-						<button rounded-r bg-gray-600 px-8 @click="search">Search</button>
+				<div flex="~ row">
+					<label mr-4>
+						<span>Enter query</span>
+						<div mt-2 flex="~ row">
+							<input
+								v-model="query"
+								name="animequiz-search"
+								type="text"
+								px-2
+								py-1
+								rounded-l
+								text-black
+								h-8
+								@keydown="$event.code === 'Enter' ? search() : undefined"
+							/>
+							<button rounded-r bg-gray-600 px-8 @click="search">Search</button>
+						</div>
+					</label>
+					<div flex="~ row gap-2" items-end>
+						<button
+							:class="!store.previousPageToken ? 'bg-gray-500' : 'bg-gray-600'"
+							:disabled="!store.previousPageToken"
+							w-24
+							h="1/2"
+							px-4
+							rounded
+							@click="previousPage"
+						>
+							Previous
+						</button>
+						<button
+							:class="!store.nextPageToken ? 'bg-gray-500' : 'bg-gray-600'"
+							:disabled="!store.nextPageToken"
+							w-24
+							h="1/2"
+							px-4
+							rounded
+							@click="nextPage"
+						>
+							Next
+						</button>
 					</div>
-				</label>
+				</div>
 				<button absolute right-0 top-0 @click="closeSearch">
 					<Icon name="fa:close" />
 				</button>
@@ -254,6 +280,12 @@
 		query.value = `${song.value?.origin} ${song.value?.name} ${song.value?.type}`;
 		searchOpen.value = true;
 		await search();
+	}
+	async function nextPage() {
+		await store.nextPage(query.value);
+	}
+	async function previousPage() {
+		await store.previousPage(query.value);
 	}
 	function closeSearch() {
 		searchOpen.value = false;

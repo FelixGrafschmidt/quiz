@@ -12,12 +12,14 @@ export default defineEventHandler(async (event) => {
 	if (!query) {
 		return {};
 	}
+	const pageToken = url.searchParams.get("pagetoken") || "";
 
 	const params: ytV3.Params$Resource$Search$List = {
 		auth: useRuntimeConfig().googleApiKey,
 		maxResults: 5,
 		q: query,
 		part: ["snippet"],
+		pageToken,
 	};
 	return (await yt.search.list(params, {
 		http2: true,

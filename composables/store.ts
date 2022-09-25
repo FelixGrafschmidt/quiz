@@ -12,6 +12,8 @@ export const useStore = defineStore("store", {
 		game: {} as Game,
 		playing: false,
 		searchResult: {} as GaxiosResponse<ytV3.Schema$SearchListResponse>,
+		nextPageToken: "" as ytV3.Schema$TokenPagination,
+		previousPageToken: "" as ytV3.Schema$TokenPagination,
 	}),
 	actions: {
 		// Channels
@@ -128,6 +130,24 @@ export const useStore = defineStore("store", {
 				params: { query },
 				headers: { Referer: window.location.href },
 			})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
+			this.nextPageToken = this.searchResult.data.nextPageToken || "";
+			this.previousPageToken = this.searchResult.data.prevPageToken || "";
+		},
+		async nextPage(query: string) {
+			this.searchResult = (await $fetch("/api/youtube/search", {
+				params: { query, pagetoken: this.nextPageToken },
+				headers: { Referer: window.location.href },
+			})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
+			this.nextPageToken = this.searchResult.data.nextPageToken || "";
+			this.previousPageToken = this.searchResult.data.prevPageToken || "";
+		},
+		async previousPage(query: string) {
+			this.searchResult = (await $fetch("/api/youtube/search", {
+				params: { query, pagetoken: this.previousPageToken },
+				headers: { Referer: window.location.href },
+			})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
+			this.nextPageToken = this.searchResult.data.nextPageToken || "";
+			this.previousPageToken = this.searchResult.data.prevPageToken || "";
 		},
 	},
 });

@@ -10,13 +10,13 @@
 	onMounted(() => {
 		player = new Player(playerDiv.value || "", { height: (props.height * window.innerHeight) / 100, width: 480 });
 		player.setVolume(50);
-		player.load(props.videoid, true);
+		player.load(props.videoid);
 	});
 	watch(
 		() => props.videoid,
 		(newValue, oldValue) => {
 			if (oldValue !== newValue) {
-				player.load(newValue, true);
+				player.load(newValue);
 			}
 		}
 	);
