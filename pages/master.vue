@@ -44,6 +44,21 @@
 				</div>
 			</div>
 			<div py-4 px-2 flex="~ row wrap" justify-center w-full gap-4>
+				<button w="45%" px-4 h-16 rounded bg-gray-600 @click="copyInvite()">Copy Invite Link</button>
+				<a
+					:href="dashboardURL"
+					cursor-pointer
+					target="_blank"
+					w="45%"
+					px-4
+					flex="~ row"
+					items-center
+					justify-center
+					h-16
+					rounded
+					bg-gray-600
+					>Open Overview</a
+				>
 				<button w="45%" px-4 h-16 rounded bg-red-800 @click="deactivateSet()">Deactivate Set</button>
 				<button w="45%" px-4 h-16 rounded bg-red-800 @click="removePlayers()">Remove Players</button>
 			</div>
@@ -96,6 +111,13 @@
 	const store = useStore();
 	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
 	const players: ComputedRef<Player[]> = computed(() => store.game.players);
+	const dashboardURL: ComputedRef<string> = computed(() => {
+		const params = new URLSearchParams();
+		for (const [key, value] of Object.entries(useRoute().query)) {
+			params.set(key, value?.toString() || "");
+		}
+		return "/?" + params;
+	});
 	const mode = ref(store.game.activeSet ? "game" : "prep");
 	const editLink = computed(() => {
 		if (process.server) {
@@ -131,5 +153,10 @@
 	}
 	async function removePlayers() {
 		await store.removePlayers();
+	}
+	async function copyInvite() {
+		const url = new URL(window.location.href);
+		url.pathname = "player";
+		await navigator.clipboard.writeText(url.toString());
 	}
 </script>

@@ -240,9 +240,9 @@
 		song.value = null;
 	}
 	function addTag() {
-		const tag = window.prompt("New Tag");
-		if (tag) {
-			song.value?.tags.push(tag);
+		const tags = window.prompt("New Tag")?.split(", ");
+		if (tags) {
+			song.value?.tags.push(...tags);
 		}
 	}
 	function deleteTag(tag: string) {
