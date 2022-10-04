@@ -13,7 +13,7 @@
     "@pinia/nuxt": "^0.4.2",
     "@unocss/reset": "^0.45.22",
     "@vueuse/core": "^9.2.0",
-    "axios": "^0.27.2",
+    "axios": "^1.0.0",
     "events": "^3.3.0",
     "fitty": "^2.3.6",
     "knuth-shuffle-seeded": "^1.0.6",
