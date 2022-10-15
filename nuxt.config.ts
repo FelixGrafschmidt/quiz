@@ -37,4 +37,5 @@ export default defineNuxtConfig({
 			devtools: true,
 		},
 	},
+	vite: {},
 });
