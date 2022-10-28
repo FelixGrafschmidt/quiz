@@ -9,7 +9,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@googleapis/youtube": "^6.0.0",
+    "@googleapis/youtube": "^8.0.0",
     "@pinia/nuxt": "^0.4.3",
     "@unocss/reset": "^0.45.29",
     "@vueuse/core": "^9.3.0",
