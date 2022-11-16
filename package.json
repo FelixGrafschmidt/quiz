@@ -18,7 +18,7 @@
     "fitty": "^2.3.6",
     "knuth-shuffle-seeded": "^1.0.6",
     "nanoid": "^4.0.0",
-    "nuxt": "3.0.0-rc.11",
+    "nuxt": "3.0.0",
     "nuxt-icon": "^0.1.6",
     "object-hash": "^3.0.0",
     "pinia": "^2.0.23",
