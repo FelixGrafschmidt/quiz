@@ -1,13 +1,13 @@
 <template>
 	<section v-if="!store.game.activeSet" mx-auto items-center h-screen my-auto gap-64 justify-center flex="~ row">
-		<a target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%]">
+		<nuxt-link target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%]">
 			<span flex flex-row justify-center mb-4>Players</span>
 			<img :src="qrPlayer" />
-		</a>
-		<a target="_blank" :href="'/master?game=' + store.game.id" class="[zoom:250%]">
+		</nuxt-link>
+		<nuxt-link target="_blank" :href="'/master?game=' + store.game.id" class="[zoom:250%]">
 			<span flex flex-row justify-center mb-4>Game Master</span>
 			<img :src="qrMaster" />
-		</a>
+		</nuxt-link>
 	</section>
 	<section v-else-if="set">
 		<div hidden h-0>
@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 	import { create, toDataURL } from "qrcode";
-	import { ComputedRef, useSSRContext } from "vue";
+	import { ComputedRef } from "vue";
 	import fitty from "fitty";
 	import { Player } from "~~/models/interfaces/Player";
 	import { Set } from "~~/models/interfaces/Set";
@@ -91,17 +91,15 @@
 	const names = ref<HTMLElement[] | null>(null);
 	const tags = ref<HTMLElement[] | null>(null);
 	const set: ComputedRef<Set | null> = computed(() => store.game.activeSet);
-	// const setOrig: ComputedRef<Set | null> = computed(() => store.game.activeSetOrig);
 	const players: ComputedRef<Player[] | null> = computed(() => store.game.players);
 
 	const currentlyPlaying: ComputedRef<Song | undefined> = computed(() => store.game.activeSet?.songs.find((song) => song.playing));
 
-	if (process.server && useSSRContext()?.req.url) {
-		const req = useSSRContext()?.req;
-		const urlMaster = new URL("/master", `http://${req.headers.host}`);
+	if (process.server) {
+		const urlMaster = new URL("/master", `http://${useRequestHeaders().host}`);
 		urlMaster.searchParams.append("game", store.game.id);
 		qrMaster = await toDataURL(create(urlMaster.toString()).segments);
-		const urlPlayers = new URL("/player", `http://${req.headers.host}`);
+		const urlPlayers = new URL("/player", `http://${useRequestHeaders().host}`);
 		urlPlayers.searchParams.append("game", store.game.id);
 		qrPlayer = await toDataURL(create(urlPlayers.toString()).segments);
 	} else {

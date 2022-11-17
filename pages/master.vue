@@ -22,7 +22,7 @@
 				<div mb-2 flex="~ row" items-end gap-2>
 					<span text-xl>Sets</span>
 					<client-only>
-						<a target="_blank" :href="editLink" underline cursor-pointer>Edit ></a>
+						<nuxt-link target="_blank" :href="editLink" underline cursor-pointer>Edit ></nuxt-link>
 					</client-only>
 				</div>
 				<div v-if="Object.keys(store.game.sets).length" flex="~ col wrap" py-4 gap-4 items-start justify-center w-full>
@@ -45,7 +45,7 @@
 			</div>
 			<div py-4 px-2 flex="~ row wrap" justify-center w-full gap-4>
 				<button w="45%" px-4 h-16 rounded bg-gray-600 @click="copyInvite()">Copy Invite Link</button>
-				<a
+				<nuxt-link
 					:href="dashboardURL"
 					cursor-pointer
 					target="_blank"
@@ -57,7 +57,7 @@
 					h-16
 					rounded
 					bg-gray-600
-					>Open Overview</a
+					>Open Overview</nuxt-link
 				>
 				<button w="45%" px-4 h-16 rounded bg-red-800 @click="deactivateSet()">Deactivate Set</button>
 				<button w="45%" px-4 h-16 rounded bg-red-800 @click="removePlayers()">Remove Players</button>
