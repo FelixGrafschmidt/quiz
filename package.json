@@ -35,7 +35,7 @@
     "@babel/preset-typescript": "^7.18.6",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@types/knuth-shuffle-seeded": "^1.0.0",
-    "@types/object-hash": "^2.2.1",
+    "@types/object-hash": "^3.0.0",
     "@types/qrcode": "^1.5.0",
     "@types/yt-player": "^3.5.1",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
