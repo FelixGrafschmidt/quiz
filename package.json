@@ -19,7 +19,7 @@
     "knuth-shuffle-seeded": "^1.0.6",
     "nanoid": "^4.0.0",
     "nuxt": "3.0.0",
-    "nuxt-icon": "^0.1.7",
+    "nuxt-icon": "^0.2.0",
     "object-hash": "^3.0.0",
     "pinia": "^2.0.24",
     "qrcode": "^1.5.1",
