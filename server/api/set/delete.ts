@@ -9,15 +9,15 @@ const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
 client.connect();
 
 export default defineEventHandler(async (event) => {
-	if (!event.req.url) {
+	if (!event.node.req.url) {
 		return 401;
 	}
-	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
+	const url = new URL(event.node.req.url, `http://${event.node.req.headers.host}`);
 	const gameid = url.searchParams.get("id");
 	if (!gameid) {
 		return 401;
 	}
-	const set: Set = await useBody(event);
+	const set: Set = await readBody(event);
 
 	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
 
