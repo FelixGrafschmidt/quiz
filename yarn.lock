@@ -801,10 +801,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.35.0.tgz#b7569632b0b788a0ca0e438235154e45d42813a7"
   integrity sha512-JXdzbRiWclLVoD8sNUjR443VVlYqiYmDVT6rGUEIEHU5YJW0gaVZwV2xgM7D4arkvASqD0IlLUVjHiFuxaftRw==
 
-"@googleapis/youtube@^8.0.2":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@googleapis/youtube/-/youtube-8.0.2.tgz#95b6467852312d40d82f088b28842486448122dc"
-  integrity sha512-ElWrfTS7NGpnrFeB//XPIo9EgFgrIh/aUQCjfLuhYFn5ikYWXkapn5kNKqGY8ZB03JA+EbSh5mH6F3MXVexOyQ==
+"@googleapis/youtube@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@googleapis/youtube/-/youtube-9.0.0.tgz#e45f6f5f7eac198c6391782b94b3ca54bacf0b63"
+  integrity sha512-abCi9o1nfODVsPDqiq/QCHte2rXgMXS7ssHoeJIWiRkbvECNNyYFtmXz96oWGMw8Pnpm3gZzMXsmC9cSdMDnvg==
   dependencies:
     googleapis-common "^6.0.3"
 
