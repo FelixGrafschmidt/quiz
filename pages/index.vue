@@ -97,15 +97,15 @@
 
 	if (process.server) {
 		const urlMaster = new URL("/master", `http://${useRequestHeaders().host}`);
-		urlMaster.searchParams.append("game", store.game.id);
+		urlMaster.searchParams.set("game", store.game.id);
 		qrMaster = await toDataURL(create(urlMaster.toString()).segments);
 		const urlPlayers = new URL("/player", `http://${useRequestHeaders().host}`);
-		urlPlayers.searchParams.append("game", store.game.id);
+		urlPlayers.searchParams.set("game", store.game.id);
 		qrPlayer = await toDataURL(create(urlPlayers.toString()).segments);
 	} else {
 		const url = new URL(window.location.href);
 		url.pathname = "/master";
-		url.searchParams.append("game", store.game.id);
+		url.searchParams.set("game", store.game.id);
 		qrMaster = await toDataURL(create(url.toString()).segments);
 		url.pathname = "/player";
 		qrPlayer = await toDataURL(create(url.toString()).segments);
