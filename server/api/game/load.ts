@@ -1,17 +1,16 @@
-import { createClient } from "redis";
+import { kv } from "@vercel/kv";
 import { Game } from "~~/models/interfaces/Game";
 
-const port = parseInt(process.env.REDIS_PORT || "6378");
-const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
-client.connect();
-
 export default defineEventHandler(async (event) => {
-	if (!event.req.url) {
+	if (!getRequestURL(event)) {
 		return [];
 	}
-	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
 
-	const result: Game = JSON.parse((await client.get(`game-${url.searchParams.get("id")}`)) || "{}");
+	const result: Game | null = await kv.get(`game-${getQuery(event).id}`);
+
+	if (!result) {
+		return 404;
+	}
 
 	return result;
 });

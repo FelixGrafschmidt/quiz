@@ -1,31 +1,40 @@
-import { createClient } from "redis";
+import { kv } from "@vercel/kv";
+import Pusher from "pusher";
 import { Key } from "~~/models/enums/Update";
 import { Game } from "~~/models/interfaces/Game";
 import { Set } from "~~/models/interfaces/Set";
 import { removeDuplicates } from "~~/utils/arrays";
 
-const port = parseInt(process.env.REDIS_PORT || "6378");
-const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
-client.connect();
+const pusher = new Pusher({
+	appId: process.env.PUSHER_APPID || "",
+	key: "4956cd21dbf523a6c3d4",
+	secret: process.env.PUSHER_SECRET || "",
+	cluster: "eu",
+	useTLS: true,
+});
 
 export default defineEventHandler(async (event) => {
-	if (!event.node.req.url) {
+	if (!getRequestPath(event)) {
 		return 401;
 	}
-	const url = new URL(event.node.req.url, `http://${event.node.req.headers.host}`);
-	const gameid = url.searchParams.get("id");
+	const gameid = getQuery(event).id as string;
 	if (!gameid) {
 		return 401;
 	}
 	const set: Set = await readBody(event);
 
-	const game: Game = JSON.parse((await client.get("game-" + gameid)) || "{}");
+	const game: Game | null = await kv.get(`game-${getQuery(event).id}`);
+
+	if (!game) {
+		return 404;
+	}
 
 	game.sets = game.sets.filter((s) => s.id !== set.id);
 
 	game.sets = removeDuplicates(game.sets, "id");
 
-	await client.publish(gameid, JSON.stringify({ key: Key.set, id: set.id, value: undefined }));
-	await client.set("game-" + gameid, JSON.stringify(game));
+	// await kv.publish(gameid, JSON.stringify({ key: Key.set, id: set.id, value: undefined }));
+	await kv.set("game-" + gameid, JSON.stringify(game));
+	await pusher.trigger(gameid, "update", { key: Key.set, id: set.id, value: undefined });
 	return true;
 });

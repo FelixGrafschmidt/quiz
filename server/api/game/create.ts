@@ -1,10 +1,6 @@
 import { nanoid } from "nanoid";
-import { createClient } from "redis";
-import { Game } from "~~/models/interfaces/Game";
-
-const port = parseInt(process.env.REDIS_PORT || "6378");
-const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
-client.connect();
+import { kv } from "@vercel/kv";
+import { Game } from "models/interfaces/Game";
 
 export default defineEventHandler(async () => {
 	const id = nanoid();
@@ -15,6 +11,6 @@ export default defineEventHandler(async () => {
 		activeSet: null,
 		// activeSetOrig: null,
 	};
-	await client.set(`game-${id}`, JSON.stringify(game));
+	await kv.set(`game-${id}`, JSON.stringify(game));
 	return game;
 });

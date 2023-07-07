@@ -1,36 +1,35 @@
-import { createClient } from "redis";
+import { kv } from "@vercel/kv";
+import Pusher from "pusher";
 import { Key } from "~~/models/enums/Update";
 import { Game } from "~~/models/interfaces/Game";
 
-const port = parseInt(process.env.REDIS_PORT || "6378");
-const client = createClient({ url: `redis://127.0.0.1:${port}`, database: 1 });
-client.connect();
+const pusher = new Pusher({
+	appId: process.env.PUSHER_APPID || "",
+	key: "4956cd21dbf523a6c3d4",
+	secret: process.env.PUSHER_SECRET || "",
+	cluster: "eu",
+	useTLS: true,
+});
 
 export default defineEventHandler(async (event) => {
-	if (!event.req.url) {
-		return [];
+	if (!getRequestPath(event)) {
+		return 401;
 	}
-	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
-	const gameid = url.searchParams.get("id");
+	const gameid = getQuery(event).id as string;
 	if (!gameid) {
 		return 401;
 	}
 
-	const game: Game = JSON.parse((await client.get(`game-${gameid}`)) || "{}");
-	const songid = url.searchParams.get("songid") || "";
+	const game: Game | null = await kv.get(`game-${getQuery(event).id}`);
+
+	if (!game) {
+		return 404;
+	}
+	const songid = getQuery(event).songid as string;
 
 	if (!game.activeSet) {
 		return 401;
 	}
-	// if (!game.activeSetOrig) {
-	// 	return 401;
-	// }
-
-	// game.activeSetOrig.songs.forEach((song) => {
-	// 	if (song.id === songid) {
-	// 		song.revealed = true;
-	// 	}
-	// });
 
 	game.activeSet.songs.forEach((song) => {
 		if (song.id === songid) {
@@ -38,7 +37,8 @@ export default defineEventHandler(async (event) => {
 		}
 	});
 
-	await client.publish(gameid, JSON.stringify({ key: Key.song, id: "reveal", value: songid }));
-	await client.set("game-" + gameid, JSON.stringify(game));
+	// await kv.publish(gameid, JSON.stringify({ key: Key.song, id: "reveal", value: songid }));
+	await kv.set("game-" + gameid, JSON.stringify(game));
+	await pusher.trigger(gameid, "update", { key: Key.song, id: "reveal", value: songid });
 	return true;
 });
