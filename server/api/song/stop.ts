@@ -33,7 +33,6 @@ export default defineEventHandler(async (event) => {
 		song.playing = false;
 	});
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.song, id: "stop" }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.song, id: "stop" });
 	return true;

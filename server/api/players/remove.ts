@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
 	}
 	game.players = game.players.filter((player) => player.id !== playerid);
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.game, id: "players", value: game.players }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.game, id: "players", value: game.players });
 	return true;

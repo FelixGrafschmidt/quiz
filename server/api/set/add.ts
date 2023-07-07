@@ -36,7 +36,6 @@ export default defineEventHandler(async (event) => {
 
 	game.sets = removeDuplicates(game.sets, "id");
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.set, id: set.id, value: set }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.set, id: set.id, value: set });
 	return true;

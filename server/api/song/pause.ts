@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 	if (!game.activeSet) {
 		return 401;
 	}
-	// await kv.publish(gameid, JSON.stringify({ key: Key.song, id: "pause", value: songid }));
+
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.song, id: "pause", value: songid });
 	return true;

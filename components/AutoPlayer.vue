@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 	import Player from "yt-player";
-	const props = defineProps({ playing: Boolean, current: { type: String, default: "" }, height: { type: Number, default: 0 } });
+	const props = defineProps({ playingProp: Boolean, currentProp: { type: String, default: "" }, height: { type: Number, default: 0 } });
 	const current = ref("");
 	const playing = ref(false);
 	const playerDiv = ref<HTMLElement | null>(null);
@@ -20,7 +20,7 @@
 	});
 	// Is there a race condition between the two watchers? Could we switch this around to eplicitly call the functions from the top instead of watchers?
 	watch(
-		() => props.playing,
+		() => props.playingProp,
 		() => {
 			if (playing.value) {
 				player.pause();
@@ -32,7 +32,7 @@
 		}
 	);
 	watch(
-		() => props.current,
+		() => props.currentProp,
 		(newValue, oldValue) => {
 			if (oldValue !== newValue) {
 				current.value = newValue;

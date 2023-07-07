@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
 
 	game.players.forEach((player) => (player.guesses = {}));
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: null }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.game, id: "activeSet", value: null });
 	return true;

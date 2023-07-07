@@ -37,7 +37,6 @@ export default defineEventHandler(async (event) => {
 		}
 	});
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.song, id: "reveal", value: songid }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.song, id: "reveal", value: songid });
 	return true;

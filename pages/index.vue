@@ -1,10 +1,10 @@
 <template>
 	<section v-if="!store.game.activeSet" mx-auto items-center h-screen my-auto gap-64 justify-center flex="~ row">
-		<nuxt-link target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%]">
+		<nuxt-link target="_blank" :href="'/player?game=' + store.game.id" class="[zoom:250%] image-render-pixel">
 			<span flex flex-row justify-center mb-4>Players</span>
 			<img :src="qrPlayer" />
 		</nuxt-link>
-		<nuxt-link target="_blank" :href="'/master?game=' + store.game.id" class="[zoom:250%]">
+		<nuxt-link target="_blank" :href="'/master?game=' + store.game.id" class="[zoom:250%] image-render-pixel">
 			<span flex flex-row justify-center mb-4>Game Master</span>
 			<img :src="qrMaster" />
 		</nuxt-link>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-	import { create, toDataURL } from "qrcode";
+	import { toDataURL } from "qrcode";
 	import { ComputedRef } from "vue";
 	import fitty from "fitty";
 	import { Player } from "~~/models/interfaces/Player";
@@ -98,16 +98,16 @@
 	if (process.server) {
 		const urlMaster = new URL("/master", `http://${useRequestHeaders().host}`);
 		urlMaster.searchParams.set("game", store.game.id);
-		qrMaster = await toDataURL(create(urlMaster.toString()).segments);
+		qrMaster = await toDataURL(urlMaster.toString());
 		const urlPlayers = new URL("/player", `http://${useRequestHeaders().host}`);
 		urlPlayers.searchParams.set("game", store.game.id);
-		qrPlayer = await toDataURL(create(urlPlayers.toString()).segments);
+		qrPlayer = await toDataURL(urlPlayers.toString());
 	} else {
 		const url = new URL(window.location.href);
 		url.pathname = "/master";
 		url.searchParams.set("game", store.game.id);
-		qrMaster = await toDataURL(create(url.toString()).segments);
+		qrMaster = await toDataURL(url.toString());
 		url.pathname = "/player";
-		qrPlayer = await toDataURL(create(url.toString()).segments);
+		qrPlayer = await toDataURL(url.toString());
 	}
 </script>

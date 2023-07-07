@@ -4,15 +4,14 @@ import { GaxiosResponse } from "gaxios";
 const yt = youtube("v3");
 
 export default defineEventHandler(async (event) => {
-	if (!event.req.url) {
-		return [];
+	if (!getRequestPath(event)) {
+		return 401;
 	}
-	const url = new URL(event.req.url, `http://${event.req.headers.host}`);
-	const query = url.searchParams.get("query");
+	const query = getQuery(event).query as string;
 	if (!query) {
 		return {};
 	}
-	const pageToken = url.searchParams.get("pagetoken") || "";
+	const pageToken = getQuery(event).pagetoken as string;
 
 	const params: ytV3.Params$Resource$Search$List = {
 		auth: useRuntimeConfig().googleApiKey,
@@ -23,6 +22,6 @@ export default defineEventHandler(async (event) => {
 	};
 	return (await yt.search.list(params, {
 		http2: true,
-		headers: { Referer: event.req.headers.referer },
+		headers: { Referer: getRequestHeader(event, "Referer") },
 	})) as GaxiosResponse<ytV3.Schema$SearchListResponse>;
 });

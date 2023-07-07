@@ -74,7 +74,6 @@ export default defineEventHandler(async (event) => {
 	});
 	game.activeSet.songs = shuffleSeeded(JSON.parse(JSON.stringify(set.songs)));
 
-	// await kv.publish(gameid, JSON.stringify({ key: Key.game, id: "activeSet", value: set }));
 	await kv.set("game-" + gameid, JSON.stringify(game));
 	await pusher.trigger(gameid, "update", { key: Key.game, id: "activeSet", value: set });
 	return true;
