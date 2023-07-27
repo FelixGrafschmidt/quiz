@@ -1,7 +1,7 @@
 <template>
 	<section px-4>
 		<div hidden h-0>
-			<AutoPlayer :current="current" :playing="playing" />
+			<AutoPlayer :current-prop="current" :playing-prop="playing" />
 		</div>
 		<client-only>
 			<label v-if="!player">

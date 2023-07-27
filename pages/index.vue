@@ -11,7 +11,7 @@
 	</section>
 	<section v-else-if="set">
 		<div hidden h-0>
-			<AutoPlayer :current="currentlyPlaying?.videoid" :playing="store.playing" />
+			<AutoPlayer :current-prop="currentlyPlaying?.videoid" :playing-prop="store.playing" />
 		</div>
 		<section mx-auto my-auto justify-center items-center text-lg class="[zoom:110%]" flex="~ row wrap" gap-8>
 			<div v-for="(song, i) in set.songs" :key="i" items-center justify-center h-90 border-8 rounded flex="~ col" w="1/6" bg-gray-700>
