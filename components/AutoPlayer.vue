@@ -12,11 +12,6 @@
 	onMounted(() => {
 		player = new Player(playerDiv.value || "", { height: (props.height * window.innerHeight) / 100, width: 480 });
 		player.setVolume(50);
-		window.setInterval(() => {
-			if (playing.value && player.getState() !== "playing") {
-				player.play();
-			}
-		}, 1000);
 	});
 	// Is there a race condition between the two watchers? Could we switch this around to eplicitly call the functions from the top instead of watchers?
 	watch(

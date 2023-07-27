@@ -125,7 +125,7 @@
 			</div>
 			<div h="1/2" w-full>
 				<div mx-auto>
-					<AutoPlayer v-if="set" :current="current" :playing="playing" :height="40" />
+					<AutoPlayer v-if="set" :current-prop="current" :playing-prop="playing" :height="40" />
 				</div>
 			</div>
 		</section>
